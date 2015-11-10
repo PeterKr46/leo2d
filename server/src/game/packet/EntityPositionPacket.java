@@ -1,6 +1,7 @@
 package game.packet;
 
 import game.EntityManager;
+import game.GameServer;
 import net.client.UClient;
 import net.packet.UPacket;
 import net.util.ArrayMerger;
@@ -56,6 +57,7 @@ public class EntityPositionPacket extends UPacket {
         float y = ByteBuffer.wrap(data, 8, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
         boolean moving = data[12] > 0 ? true : false;
         float[] pos = new float[] {x,y};
+        GameServer.log("Pos " + x + "|" + y);
         EntityManager.Entity entity = EntityManager.getInstance().getEntity(origin.getUuid());
         if(!entity.isAt(pos) || moving != entity.isMoving()) {
             EntityManager.getInstance().getEntity(origin.getUuid()).setPosition(pos);

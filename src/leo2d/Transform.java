@@ -194,4 +194,8 @@ public class Transform {
 	public String toString() {
 		return "Transform(" + name + ", " + position + ")";
 	}
+
+	public void removeBehaviour(Behaviour behaviour) {
+		behaviours.remove(behaviour);
+	}
 }

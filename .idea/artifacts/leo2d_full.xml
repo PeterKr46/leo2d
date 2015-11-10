@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact name="leo2d_full">
+    <output-path>$PROJECT_DIR$/artifacts/build</output-path>
+    <root id="root">
+      <element id="directory" name="assets">
+        <element id="dir-copy" path="$PROJECT_DIR$/assets" />
+      </element>
+      <element id="directory" name="lib">
+        <element id="dir-copy" path="$PROJECT_DIR$/lib" />
+      </element>
+      <element id="artifact" artifact-name="leo2d:jar" />
+    </root>
+  </artifact>
+</component>

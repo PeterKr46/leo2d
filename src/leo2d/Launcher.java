@@ -2,6 +2,9 @@ package leo2d;
 
 import leo2d.animation.Animation;
 import leo2d.animation.Animator;
+import leo2d.client.ClientInThread;
+import leo2d.client.ClientOutThread;
+import leo2d.client.ServerClient;
 import leo2d.core.Camera;
 import leo2d.math.Vector;
 import leo2d.physics.IsometricController;
@@ -12,6 +15,7 @@ import leo2d.sprite.Texture;
 public class Launcher {
 	public static void main(String[] args) {
 		System.out.println("v0.01");
+
 		Camera camera = new Camera();
 		camera.backgroundColor = new double[] {0.3, 0.5, 1};
 		camera.debug = true;
@@ -39,5 +43,9 @@ public class Launcher {
 		}
 		animator.animation = animation;
 		player.addRenderer().sprite = iconSprite;
+		ClientInThread inThread = (ClientInThread) player.addBehaviour(ClientInThread.class);
+		ClientOutThread outThread = (ClientOutThread) player.addBehaviour(ClientOutThread.class);
+		inThread.client = new ServerClient("87.168.94.200", 2000);
+		outThread.client = inThread.client;
 	}
 }
