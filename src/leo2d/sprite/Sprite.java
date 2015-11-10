@@ -15,6 +15,12 @@ public class Sprite {
 		this.ppu = texture.getHeight();
 	}
 
+	public Sprite(Texture texture, Rect rect) {
+		this.texture = texture;
+		this.rect = rect.clone();
+		this.ppu = texture.getHeight();
+	}
+
 	public Vector getOffset() {
 		return offset.clone();
 	}

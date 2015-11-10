@@ -62,5 +62,8 @@ public class IsometricController extends Behaviour {
             }
         }
         transform.getRenderer().setIndexInLayer((int) (transform.position.y * 100));
+        Vector dir = getDirection();
+        dir.normalize();
+        transform.scale = new Vector(dir.x != 0 ? dir.x : 1, 1);
     }
 }

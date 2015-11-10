@@ -1,14 +1,13 @@
 package leo2d.core;
 
-import leo2d.Transform;
-import leo2d.input.*;
-import leo2d.math.*;
-import leo2d.gl.VoltImg;
-
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
-
 import com.jogamp.opengl.util.FPSAnimator;
+import leo2d.Transform;
+import leo2d.gl.VoltImg;
+import leo2d.input.Input;
+import leo2d.math.Segment;
+import leo2d.math.Vector;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -45,6 +44,7 @@ public class Camera implements GLEventListener {
 	private Vector position = new Vector(0,0);
 	
 	public double[] backgroundColor = new double[] {0.15, 0.15, 0.15};
+	public double[] debugBackgroundColor = new double[] {0.15, 0.15, 0.15};
 	
 	
 	public Vector localize(Vector worldPos) {
@@ -204,7 +204,11 @@ public class Camera implements GLEventListener {
 	
 	private void drawGrid(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
-		gl.glColor3d(backgroundColor[0], backgroundColor[1], backgroundColor[2]);
+		if(debug()) {
+			gl.glColor3d(debugBackgroundColor[0], debugBackgroundColor[1], debugBackgroundColor[2]);
+		} else {
+			gl.glColor3d(backgroundColor[0], backgroundColor[1], backgroundColor[2]);
+		}
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glVertex2d(-1, -1);
 		gl.glVertex2d(1, -1);
