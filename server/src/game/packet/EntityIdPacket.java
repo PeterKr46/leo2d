@@ -44,4 +44,10 @@ public class EntityIdPacket extends UPacket {
     public byte[] getData() {
         return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(entityId).array();
     }
+
+    @Override
+    public void clientHandle(byte[] data) {
+        int id = ByteBuffer.wrap(data, 0, 4).order(ByteOrder.LITTLE_ENDIAN).getInt();
+
+    }
 }

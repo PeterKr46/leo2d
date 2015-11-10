@@ -7,12 +7,11 @@ import java.net.Socket;
 /**
  * Created by Peter on 10.11.2015.
  */
-public class ServerClient {
-
+public class Client {
 
     private Socket socket;
 
-    public ServerClient(String ip, int port) {
+    public Client(String ip, int port) {
         try {
             socket = new Socket(ip, port);
         } catch (IOException e) {

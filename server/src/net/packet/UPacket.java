@@ -26,4 +26,8 @@ public abstract class UPacket {
      * Handles the raw content of incoming packets.
      */
     public abstract void handle(byte[] data, UClient origin);
+
+    public void clientHandle(byte[] data) {
+
+    }
 }

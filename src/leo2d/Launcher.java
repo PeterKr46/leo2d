@@ -2,9 +2,9 @@ package leo2d;
 
 import leo2d.animation.Animation;
 import leo2d.animation.Animator;
+import leo2d.client.Client;
 import leo2d.client.ClientInThread;
 import leo2d.client.ClientOutThread;
-import leo2d.client.ServerClient;
 import leo2d.core.Camera;
 import leo2d.math.Vector;
 import leo2d.physics.IsometricController;
@@ -45,7 +45,7 @@ public class Launcher {
 		player.addRenderer().sprite = iconSprite;
 		ClientInThread inThread = (ClientInThread) player.addBehaviour(ClientInThread.class);
 		ClientOutThread outThread = (ClientOutThread) player.addBehaviour(ClientOutThread.class);
-		inThread.client = new ServerClient("87.168.94.200", 2000);
+		inThread.client = new Client("87.168.94.200", 2000);
 		outThread.client = inThread.client;
 	}
 }

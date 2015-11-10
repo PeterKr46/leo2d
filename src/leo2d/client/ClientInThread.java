@@ -14,7 +14,7 @@ import java.nio.ByteOrder;
  * Created by Peter on 10.11.2015.
  */
 public class ClientInThread extends ThreadedBehaviour {
-    public ServerClient client;
+    public Client client;
     public ClientInThread(Transform transform) {
         super(transform);
     }

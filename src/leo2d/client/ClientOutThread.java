@@ -8,7 +8,7 @@ import leo2d.behaviour.ThreadedBehaviour;
  * Created by Peter on 10.11.2015.
  */
 public class ClientOutThread extends ThreadedBehaviour {
-    public ServerClient client;
+    public Client client;
     public ClientOutThread(Transform transform) {
         super(transform);
     }
