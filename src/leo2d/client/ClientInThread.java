@@ -2,7 +2,7 @@ package leo2d.client;
 
 import game.packet.EntityPositionPacket;
 import leo2d.Transform;
-import leo2d.behaviour.ThreadedBehaviour;
+import leo2d.component.ThreadedComponent;
 import net.packet.Registry;
 import net.packet.UPacket;
 
@@ -13,7 +13,7 @@ import java.nio.ByteOrder;
 /**
  * Created by Peter on 10.11.2015.
  */
-public class ClientInThread extends ThreadedBehaviour {
+public class ClientInThread extends ThreadedComponent {
     public Client client;
     public ClientInThread(Transform transform) {
         super(transform);

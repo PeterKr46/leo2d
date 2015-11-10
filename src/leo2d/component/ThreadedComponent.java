@@ -1,11 +1,11 @@
-package leo2d.behaviour;
+package leo2d.component;
 
 import leo2d.Transform;
 
 /**
  * Created by Peter on 10.11.2015.
  */
-public abstract class ThreadedBehaviour extends Behaviour {
+public abstract class ThreadedComponent extends Component {
     private Thread sideThread = new Thread(new Runnable() {
         @Override
         public void run() {
@@ -23,7 +23,7 @@ public abstract class ThreadedBehaviour extends Behaviour {
     });
 
     private boolean stop = false;
-    public ThreadedBehaviour(Transform transform) {
+    public ThreadedComponent(Transform transform) {
         super(transform);
         sideThread.start();
     }
@@ -35,9 +35,9 @@ public abstract class ThreadedBehaviour extends Behaviour {
     @Override
     public final void update() {
         if(stop) {
-            transform.removeBehaviour(this);
+            transform.removeComponent(this);
         }
-        // Nothing, this Behaviour does not touch the main thread.
+        // Nothing, this Component does not touch the main thread.
     }
 
     public abstract void threadedUpdate();

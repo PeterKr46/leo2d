@@ -14,6 +14,9 @@ public class PriorityQueue<E> {
     }
 
     public E dequeue() {
+        if(first == null) {
+            return null;
+        }
         E result = first.content;
         if(others.size() == 0) {
         	first = null;

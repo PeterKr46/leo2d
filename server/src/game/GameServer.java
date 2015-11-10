@@ -1,6 +1,9 @@
 package game;
 
-import game.packet.*;
+import game.packet.EntityAliasPacket;
+import game.packet.EntityIdPacket;
+import game.packet.EntityPositionPacket;
+import game.packet.EntitySpawnPacket;
 import net.client.UClient;
 import net.packet.UPacket;
 import net.server.UServer;
@@ -29,12 +32,14 @@ public class GameServer extends UServer {
         EntityManager.Entity entity = EntityManager.getInstance().createEntity(client);
         int id = entity.getEntityId();
         log("Assigned Entity ID #" + id);
+        UPacket spawnPacket = new EntitySpawnPacket(id, entity.getPosition());
         client.sendPacket(new EntityIdPacket(id));
+        client.sendPacket(spawnPacket);
         for(UClient other : clients) {
             if(client != other) {
                 log("Sent spawn packet to " + EntityManager.getInstance().getEntityId(other.getUuid()));
                 EntityManager.Entity otherEnt = EntityManager.getInstance().getEntity(other.getUuid());
-                other.sendPacket(new EntitySpawnPacket(id));
+                other.sendPacket(spawnPacket);
                 client.sendPacket(new EntitySpawnPacket(otherEnt.getEntityId()));
                 client.sendPacket(new EntityPositionPacket(otherEnt.getEntityId(), otherEnt.getPosition(), otherEnt.isMoving()));
                 client.sendPacket(new EntityDirectionPacket(otherEnt.getEntityId(), otherEnt.getFaceDirection(), otherEnt.getMoveDirection()));

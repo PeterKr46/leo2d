@@ -1,10 +1,10 @@
-package leo2d.behaviour;
+package leo2d.component;
 
 import leo2d.Transform;
 import leo2d.core.Camera;
 import leo2d.math.Vector;
 
-public class Rotate extends Behaviour {
+public class Rotate extends Component {
 	public Rotate(Transform transform) {
 		super(transform);
 	}

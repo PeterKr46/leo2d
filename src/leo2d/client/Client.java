@@ -46,17 +46,17 @@ public class Client {
             byte[] receivedBytes = new byte[len];
             socket.getInputStream().read(receivedBytes, 0, len);
             return receivedBytes;
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return new byte[0];
     }
 
     public boolean isConnected() {
-        return socket.isConnected();
+        return socket != null && socket.isConnected();
     }
 
-    public void close() throws IOException {
+    public void close() throws Exception {
         socket.close();
     }
 }

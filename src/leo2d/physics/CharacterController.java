@@ -2,7 +2,7 @@ package leo2d.physics;
 
 import leo2d.Debug;
 import leo2d.Transform;
-import leo2d.behaviour.Behaviour;
+import leo2d.component.Component;
 import leo2d.core.Camera;
 import leo2d.math.Ray;
 import leo2d.math.Vector;
@@ -10,7 +10,7 @@ import leo2d.math.Vector;
 /**
  * Created by Peter on 15.10.2015.
  */
-public class CharacterController extends Behaviour {
+public class CharacterController extends Component {
     public double radius = 0.25f;
     public double height = 1f;
 

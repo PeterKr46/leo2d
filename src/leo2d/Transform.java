@@ -1,7 +1,7 @@
 package leo2d;
 
 import com.jogamp.opengl.GLAutoDrawable;
-import leo2d.behaviour.Behaviour;
+import leo2d.component.Component;
 import leo2d.core.Camera;
 import leo2d.gl.VoltImg;
 import leo2d.math.Vector;
@@ -32,7 +32,7 @@ public class Transform {
 	public Vector scale = new Vector(1,1);
 	public float rotation = 0;
 
-	private List<Behaviour> behaviours = new ArrayList<Behaviour>();
+	private List<Component> components = new ArrayList<Component>();
 	private SpriteRenderer renderer;
 
 	private Transform(String name) {
@@ -45,10 +45,10 @@ public class Transform {
 		return position.clone();
 	}
 
-	public Behaviour addBehaviour(Class<? extends Behaviour> cls) {
+	public Component addComponent(Class<? extends Component> cls) {
 		try {
-			Behaviour b = cls.getConstructor(Transform.class).newInstance(this);
-			behaviours.add(b);
+			Component b = cls.getConstructor(Transform.class).newInstance(this);
+			components.add(b);
 			return b;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -68,8 +68,8 @@ public class Transform {
 	}
 
 	//TODO
-	public Behaviour getBehaviour(Class<? extends Behaviour> cls) {
-		for(Behaviour b : behaviours) {
+	public Component getComponent(Class<? extends Component> cls) {
+		for(Component b : components) {
 			if(b.getClass() == cls) {
 				return b;
 			}
@@ -78,18 +78,18 @@ public class Transform {
 	}
 
 	/**
-	 * Calls a method on all Behaviours attached to this Transform.
-	 * @param methodName Name of the method to invoke on Behaviours
-	 * @return true if at least one Behaviour received it.
+	 * Calls a method on all Components attached to this Transform.
+	 * @param methodName Name of the method to invoke on Components
+	 * @return true if at least one Component received it.
 	 */
 
 	public boolean sendMessage(String methodName) {
 		boolean ret = false;
-		for(Behaviour behaviour : behaviours) {
+		for(Component component : components) {
 			try {
-				Method method = behaviour.getClass().getMethod(methodName);
+				Method method = component.getClass().getMethod(methodName);
 				ret = true;
-				method.invoke(behaviour);
+				method.invoke(component);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -98,20 +98,20 @@ public class Transform {
 	}
 
 	/**
-	 * Calls a method on all Behaviours attached to this Transform.
-	 * @param methodName The name of the method to invoke on Behaviours
+	 * Calls a method on all Components attached to this Transform.
+	 * @param methodName The name of the method to invoke on Components
 	 * @param argTypes An Array of types the method requires as arguments.
 	 * @param args The values to pass as arguments.
-	 * @return true if at least one Behaviour received it.
+	 * @return true if at least one Component received it.
 	 */
 
 	public boolean sendMessage(String methodName, Class<?>[] argTypes, Object[] args) {
 		boolean ret = false;
-		for(Behaviour behaviour : behaviours) {
+		for(Component component : components) {
 			try {
-				Method method = behaviour.getClass().getMethod(methodName, argTypes);
+				Method method = component.getClass().getMethod(methodName, argTypes);
 				ret = true;
-				method.invoke(behaviour, args);
+				method.invoke(component, args);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -125,10 +125,10 @@ public class Transform {
 		}
 	}
 
-	public void updateBehaviours(GLAutoDrawable drawable) {
+	public void updateComponents(GLAutoDrawable drawable) {
 		drawArrows(drawable);
-		for(Behaviour behaviour : behaviours.toArray(new Behaviour[behaviours.size()])) {
-			behaviour.update();
+		for(Component component : components.toArray(new Component[components.size()])) {
+			component.update();
 		}
 	}
 
@@ -169,25 +169,6 @@ public class Transform {
 			scale.y = 1 / scale.y;
 
 			volty.filledCircle(center, len/8, 0.1f);
-			/*Vector pp = cam.worldToPixelPos(position);
-			Vector mp = Input.getMousePosition();
-			Vector diff = Vector.difference(pp, mp);
-			float rad = 0.12f * len / (cam.getVerticalSize() * 2);
-			rad *= cam.getScreenHeight();
-			if (diff.magnitude() < rad /*&& Debug.dragging == null) || Debug.dragging == this) {
-				volty.filledCircle(center, 0.075f * len, 0.1f, red);
-				if(Input.isLMouseDown() && (Debug.dragging == null || Debug.dragging == this)) {
-					//Debug.dragging = this;
-				}
-			} else {
-				volty.filledCircle(center, 0.075f * len, 0.1f, yellow);
-			}
-			if(Debug.dragging == this) {
-				position = cam.screenToWorldPos(Input.getPercentiveMousePosition());
-				if(Input.isKeyDown('q')) {
-					position = new Vector(Math.round(position.x), (int)position.y);
-				}
-			}*/
 		}
 	}
 
@@ -195,7 +176,11 @@ public class Transform {
 		return "Transform(" + name + ", " + position + ")";
 	}
 
-	public void removeBehaviour(Behaviour behaviour) {
-		behaviours.remove(behaviour);
+	public void removeComponent(Component component) {
+		components.remove(component);
+	}
+
+	public boolean hasRenderer() {
+		return getRenderer() != null;
 	}
 }

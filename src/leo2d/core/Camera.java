@@ -8,6 +8,7 @@ import leo2d.gl.VoltImg;
 import leo2d.input.Input;
 import leo2d.math.Segment;
 import leo2d.math.Vector;
+import leo2d.util.data.PriorityQueue;
 
 import java.awt.*;
 import java.awt.event.WindowAdapter;
@@ -194,11 +195,19 @@ public class Camera implements GLEventListener {
 		drawGrid(drawable);
 		List<Transform> transforms = Transform.getAllTransforms();
 
+		PriorityQueue<Transform> renderOrder = new PriorityQueue<>();
 		for(Transform transform : transforms) {
-			transform.update(drawable);
+			if(transform.hasRenderer()) {
+				renderOrder.enqueue(transform, -(transform.getRenderer().getLayer() * 1000 + transform.getRenderer().getIndexInLayer()));
+			}
+		}
+		Transform t = renderOrder.dequeue();
+		while(t != null) {
+			t.update(drawable);
+			t = renderOrder.dequeue();
 		}
 		for(Transform transform : transforms) {
-			transform.updateBehaviours(drawable);
+			transform.updateComponents(drawable);
 		}
 	}
 	
@@ -224,14 +233,14 @@ public class Camera implements GLEventListener {
 		double color = 0.6;
 		for(int i = (int)Math.round(min.y); i < max.y; i++) {
 			double alpha = 0.2;
-			if( ((int)i) % 10 == 0) {
+			if( i % 10 == 0) {
 				alpha = 0.6;
 			}
 			volty.line(new Vector(min.x, i), new Vector(max.x, i), new double[] {color, color, color, alpha});
 		}
 		for(int i = (int)Math.round(min.x); i < max.x; i++) {
 			double alpha = 0.2;
-			if( ((int)i) % 10 == 0) {
+			if( i % 10 == 0) {
 				alpha = 0.6;
 			}
 			volty.line(new Vector(i, min.y), new Vector(i, max.y), new double[] {color, color, color, alpha});

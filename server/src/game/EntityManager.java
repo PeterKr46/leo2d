@@ -47,8 +47,8 @@ public class EntityManager {
     public Entity createEntity(UClient client) {
         int entityId = generateEntityId();
         UUID uuid = client == null ? UUID.randomUUID() : client.getUuid();
-        float[] position = new float[] {0,0};
-        Entity entity = new Entity(uuid, entityId, position, 0f, 0f);
+        double[] position = new double[] {0,0};
+        Entity entity = new Entity(uuid, entityId, position, 0);
         entities.put(entityId, entity);
         entityIds.put(uuid, entityId);
         return entity;
@@ -63,12 +63,12 @@ public class EntityManager {
     }
 
     public boolean moved(UUID client, float[] currentPos) {
-        float[] oldPos = entities.get(getEntityId(client)).position;
+        double[] oldPos = entities.get(getEntityId(client)).position;
         return !(oldPos[0] == currentPos[0] && oldPos[1] == currentPos[1]);
     }
 
     public boolean turned(UUID client, float currentDirection) {
-        float oldDirection = entities.get(getEntityId(client)).faceDirection;
+        float oldDirection = entities.get(getEntityId(client)).moveDirection;
         return oldDirection != currentDirection;
     }
 
@@ -86,19 +86,18 @@ public class EntityManager {
 
     public static class Entity {
 
-        private Entity(UUID uuid, int entityId, float[] position, float moveDirection, float faceDirection) {
+        private Entity(UUID uuid, int entityId, double[] position, int moveDirection) {
             this.uuid = uuid;
             this.entityId = entityId;
             this.position = position;
             this.moveDirection = moveDirection;
-            this.faceDirection = faceDirection;
             this.moving = false;
         }
 
         private UUID uuid;
         private int entityId;
-        private float[] position;
-        private float moveDirection, faceDirection;
+        private double[] position;
+        private int moveDirection;
         private boolean moving;
         private int weapon;
 
@@ -106,18 +105,13 @@ public class EntityManager {
             return entityId;
         }
 
-        public void setPosition(float[] position) {
+        public void setPosition(double[] position) {
             this.position = position;
             EntityManager.instance.moved.add(this);
         }
 
-        public void setMoveDirection(float direction) {
+        public void setMoveDirection(int direction) {
             this.moveDirection = direction;
-            EntityManager.instance.turned.add(this);
-        }
-
-        public void setFaceDirection(float direction) {
-            this.faceDirection = direction;
             EntityManager.instance.turned.add(this);
         }
 
@@ -133,13 +127,10 @@ public class EntityManager {
             this.moving = moving;
         }
 
-        public float[] getPosition() {
+        public double[] getPosition() {
             return position;
         }
 
-        public float getFaceDirection() {
-            return faceDirection;
-        }
         public float getMoveDirection() {
             return moveDirection;
         }

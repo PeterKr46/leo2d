@@ -1,4 +1,4 @@
-package leo2d.behaviour;
+package leo2d.component;
 
 import leo2d.Transform;
 import leo2d.core.Camera;
@@ -12,7 +12,7 @@ import leo2d.physics.collider.Collider;
 import leo2d.physics.collider.EdgeCollider;
 import leo2d.util.data.PriorityQueue;
 
-public class Light extends Behaviour {
+public class Light extends Component {
 	
 	public Light(Transform transform) {
 		super(transform);

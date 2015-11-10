@@ -1,6 +1,7 @@
 package game.packet;
 
 
+import leo2d.characters.Player;
 import net.client.UClient;
 import net.packet.UPacket;
 
@@ -47,7 +48,6 @@ public class EntityIdPacket extends UPacket {
 
     @Override
     public void clientHandle(byte[] data) {
-        int id = ByteBuffer.wrap(data, 0, 4).order(ByteOrder.LITTLE_ENDIAN).getInt();
-
+        Player.getInstance().entityId = ByteBuffer.wrap(data, 0, 4).order(ByteOrder.LITTLE_ENDIAN).getInt();
     }
 }

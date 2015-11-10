@@ -1,5 +1,7 @@
 package game.packet;
 
+import leo2d.characters.CharacterCreator;
+import leo2d.characters.Player;
 import net.client.UClient;
 import net.packet.UPacket;
 import net.server.UServer;
@@ -23,7 +25,7 @@ public class EntitySpawnPacket extends UPacket {
 
     public EntitySpawnPacket(int id) {
         this.entityId = id;
-        this.position = new float[] {0, 0, 0};
+        this.position = new float[] {0, 0};
     }
 
     public EntitySpawnPacket(int id, float[] position) {
@@ -53,7 +55,18 @@ public class EntitySpawnPacket extends UPacket {
         int id = ByteBuffer.wrap(data, 0, 4).order(ByteOrder.LITTLE_ENDIAN).getInt();
         float x = ByteBuffer.wrap(data, 4, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
         float y = ByteBuffer.wrap(data, 8, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-        float z = ByteBuffer.wrap(data, 12, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
-        UServer.log("[DEPR] Entity #" + id + " spawned at (" + x + " " + y + " " + z + ")");
+        UServer.log("[DEPR] Entity #" + id + " spawned at (" + x + " " + y + ")");
+    }
+
+    @Override
+    public void clientHandle(byte[] data) {
+        int id = ByteBuffer.wrap(data, 0, 4).order(ByteOrder.LITTLE_ENDIAN).getInt();
+        float x = ByteBuffer.wrap(data, 4, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+        float y = ByteBuffer.wrap(data, 8, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+        if(id == Player.getInstance().entityId) {
+            Player.getInstance().teleport(x,y);
+        } else {
+            CharacterCreator.createNPC();
+        }
     }
 }

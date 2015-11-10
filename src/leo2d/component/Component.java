@@ -1,13 +1,13 @@
-package leo2d.behaviour;
+package leo2d.component;
 
 import leo2d.Transform;
 
-public abstract class Behaviour {
+public abstract class Component {
 	public abstract void update();
 	
 	protected Transform transform;
 
-	public Behaviour(Transform transform) {
+	public Component(Transform transform) {
 		this.transform = transform;
 	}
 }

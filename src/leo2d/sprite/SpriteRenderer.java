@@ -40,11 +40,11 @@ public class SpriteRenderer {
 
 	public void draw() {
 		VoltImg volty = Camera.main().getVolty();
-		
-		Texture tex = sprite.getTexture();
-		if(tex == null) {
+
+		if(sprite == null || sprite.getTexture() == null) {
 			return;
 		}
+		Texture tex = sprite.getTexture();
 		
 		volty.enable(3553);
 		tex.loadGLTexture(Camera.main().getGL());
@@ -59,7 +59,7 @@ public class SpriteRenderer {
 		Vector right = new Vector(transform.scale.x, 0).rotate(transform.rotation).multiply(sprite.getWidth() / sprite.getPPU());
 		Vector up = new Vector(0, transform.scale.y).rotate(transform.rotation).multiply(sprite.getHeight() / sprite.getPPU());
 		
-		Vector bl = transform.position.clone().add(sprite.getOffset().rotate(transform.rotation)).toFixed();
+		Vector bl = transform.position.clone().add(sprite.getOffset().multiply(transform.scale).rotate(transform.rotation)).toFixed();
 		Vector br = bl.add(right);
 		Vector tr = bl.add(right).add(up);
 		Vector tl = bl.add(up);
