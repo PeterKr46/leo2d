@@ -21,6 +21,23 @@ public class SpriteRenderer {
 		return enabled;
 	}
 
+	public int getLayer() {
+		return layer;
+	}
+
+	public int getIndexInLayer() {
+		return layerIndex;
+	}
+
+	public void setLayer(int layer) {
+		this.layer = layer;
+	}
+
+	public void setIndexInLayer(int indexInLayer) {
+		this.layerIndex = indexInLayer;
+	}
+
+
 	public void draw() {
 		VoltImg volty = Camera.main().getVolty();
 		

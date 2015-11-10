@@ -5,9 +5,15 @@ package leo2d.math;
  */
 public class Vector {
 
-	public static FixedVector right = new FixedVector(1,0);
-	public static FixedVector up = new FixedVector(0,1);
-	public static FixedVector zero = new FixedVector(0,0);
+	public static Vector right() {
+		return new Vector(1,0);
+	}
+	public static Vector up() {
+		return new Vector(0,1);
+	}
+	public static Vector zero() {
+		return new Vector(0,0);
+	}
 
 	public double x, y;
 	public Vector(double x, double y) {
@@ -18,10 +24,10 @@ public class Vector {
 
 	public Vector getOrth() {
 		if(x == 0) {
-			return Vector.right;
+			return Vector.right();
 		}
 		if(y == 0) {
-			return Vector.up;
+			return Vector.up();
 		}
 		return new Vector(-y, x);
 	}
