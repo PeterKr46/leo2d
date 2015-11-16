@@ -2,7 +2,7 @@ package game;
 
 import game.packet.EntityAliasPacket;
 import game.packet.EntityIdPacket;
-import game.packet.EntityPositionPacket;
+import game.packet.EntityMovePacket;
 import game.packet.EntitySpawnPacket;
 import net.client.UClient;
 import net.packet.UPacket;
@@ -41,8 +41,7 @@ public class GameServer extends UServer {
                 EntityManager.Entity otherEnt = EntityManager.getInstance().getEntity(other.getUuid());
                 other.sendPacket(spawnPacket);
                 client.sendPacket(new EntitySpawnPacket(otherEnt.getEntityId()));
-                client.sendPacket(new EntityPositionPacket(otherEnt.getEntityId(), otherEnt.getPosition(), otherEnt.isMoving()));
-                client.sendPacket(new EntityDirectionPacket(otherEnt.getEntityId(), otherEnt.getFaceDirection(), otherEnt.getMoveDirection()));
+                client.sendPacket(new EntityMovePacket(otherEnt.getEntityId(), otherEnt.getPosition(), otherEnt.getDirection()));
                 client.sendPacket(new EntityAliasPacket(otherEnt.getEntityId(), other.getAlias()));
             }
         }
@@ -51,17 +50,9 @@ public class GameServer extends UServer {
     @Override
     public void tick() {
         for(EntityManager.Entity moved : EntityManager.getInstance().wipeMoved()) {
-            EntityPositionPacket packet = new EntityPositionPacket(moved.getEntityId(), moved.getPosition(), moved.isMoving());
+            EntityMovePacket packet = new EntityMovePacket(moved.getEntityId(), moved.getPosition(), moved.getDirection());
             for(UClient other : clients) {
                 if(other.getUuid() != moved.getUuid()) {
-                    other.sendPacket(packet);
-                }
-            }
-        }
-        for(EntityManager.Entity turned : EntityManager.getInstance().wipeTurned()) {
-            EntityDirectionPacket packet = new EntityDirectionPacket(turned.getEntityId(), turned.getFaceDirection(), turned.getMoveDirection());
-            for(UClient other : clients) {
-                if(other.getUuid() != turned.getUuid()) {
                     other.sendPacket(packet);
                 }
             }

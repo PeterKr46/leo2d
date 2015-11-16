@@ -31,7 +31,7 @@ public class EntityAliasPacket extends UPacket {
 
     @Override
     public int getId() {
-        return 6;
+        return 5;
     }
 
     /**

@@ -1,6 +1,6 @@
 package leo2d.characters;
 
-import leo2d.Transform;
+import leo2d.core.Transform;
 import leo2d.animation.Animation;
 import leo2d.animation.Animator;
 import leo2d.client.Client;
@@ -20,7 +20,7 @@ public class CharacterCreator {
     private static Animation down = Animation.fromSpritesheet(new SpriteSheet(new Texture("assets/steve_down.png")).slice(512, 512).offset(new Vector(-0.5, 0)));
     private static Animation idle = Animation.fromSpritesheet(new SpriteSheet(new Texture("assets/steve_idle.png")).slice(512, 512).offset(new Vector(-0.5, 0)));
 
-    public static Transform createNPC(String name) {
+    public static Transform createNPC(String name, int entityId) {
         Transform transform = Transform.createEmpty(name);
         transform.addRenderer();
         transform.addComponent(Animator.class);
@@ -29,6 +29,7 @@ public class CharacterCreator {
         npc.up = up;
         npc.down = down;
         npc.idle = idle;
+        npc.setEntityId(entityId);
 
         return transform;
     }

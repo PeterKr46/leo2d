@@ -1,6 +1,6 @@
 package leo2d.component;
 
-import leo2d.Transform;
+import leo2d.core.Transform;
 
 /**
  * Created by Peter on 10.11.2015.

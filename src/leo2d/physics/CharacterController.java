@@ -1,9 +1,9 @@
 package leo2d.physics;
 
-import leo2d.Debug;
-import leo2d.Transform;
 import leo2d.component.Component;
 import leo2d.core.Camera;
+import leo2d.core.Debug;
+import leo2d.core.Transform;
 import leo2d.math.Ray;
 import leo2d.math.Vector;
 

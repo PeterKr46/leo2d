@@ -2,8 +2,8 @@ package leo2d.sprite;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import leo2d.Transform;
 import leo2d.core.Camera;
+import leo2d.core.Transform;
 import leo2d.gl.VoltImg;
 import leo2d.math.Rect;
 import leo2d.math.Vector;
@@ -37,11 +37,30 @@ public class SpriteRenderer {
 		this.layerIndex = indexInLayer;
 	}
 
+	public Rect getAABB() {
+		if(sprite == null || sprite.getTexture() == null) {
+			return new Rect(transform.position.x, transform.position.y, 0, 0);
+		}
+
+		Vector right = new Vector(transform.scale.x, 0).rotate(transform.rotation).multiply(sprite.getWidth() / sprite.getPPU());
+		Vector up = new Vector(0, transform.scale.y).rotate(transform.rotation).multiply(sprite.getHeight() / sprite.getPPU());
+
+		Vector bl = transform.position.clone().add(sprite.getOffset().multiply(transform.scale).rotate(transform.rotation)).toFixed();
+		Vector br = bl.add(right);
+		Vector tr = bl.add(right).add(up);
+		Vector tl = bl.add(up);
+		double xMin = Math.min(bl.x, Math.min(br.x, Math.min(tr.x, tl.x)));
+		double yMin = Math.min(bl.y, Math.min(br.y, Math.min(tr.y, tl.y)));
+		double xMax = Math.max(bl.x, Math.max(br.x, Math.max(tr.x, tl.x)));
+		double yMax = Math.max(bl.y, Math.max(br.y, Math.max(tr.y, tl.y)));
+		return new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
+	}
 
 	public void draw() {
 		VoltImg volty = Camera.main().getVolty();
-
-		if(sprite == null || sprite.getTexture() == null) {
+		Rect aabb = getAABB();
+		aabb.visualize();
+		if(sprite == null || sprite.getTexture() == null || !aabb.intersects(Camera.main().getAABB())) {
 			return;
 		}
 		Texture tex = sprite.getTexture();

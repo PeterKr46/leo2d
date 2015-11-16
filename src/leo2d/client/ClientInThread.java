@@ -1,8 +1,7 @@
 package leo2d.client;
 
-import game.packet.EntityPositionPacket;
-import leo2d.Transform;
 import leo2d.component.ThreadedComponent;
+import leo2d.core.Transform;
 import net.packet.Registry;
 import net.packet.UPacket;
 
@@ -30,11 +29,10 @@ public class ClientInThread extends ThreadedComponent {
             System.arraycopy(raw, 4, data, 0, data.length);
             try {
                 UPacket packet = (UPacket) Registry.packets[id].getConstructor().newInstance();
-
+                packet.clientHandle(data);
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 e.printStackTrace();
             }
-            client.send(new EntityPositionPacket(0, new float[] {(float) transform.position.x, (float) transform.position.y},false).build());
         }
     }
 }

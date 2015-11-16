@@ -1,8 +1,7 @@
-package leo2d;
+package leo2d.core;
 
 import com.jogamp.opengl.GLAutoDrawable;
 import leo2d.component.Component;
-import leo2d.core.Camera;
 import leo2d.gl.VoltImg;
 import leo2d.math.Vector;
 import leo2d.sprite.SpriteRenderer;

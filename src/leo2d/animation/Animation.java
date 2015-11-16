@@ -1,7 +1,6 @@
 package leo2d.animation;
 
 
-import leo2d.Debug;
 import leo2d.sprite.Sprite;
 import leo2d.sprite.SpriteSheet;
 import leo2d.util.Callback;

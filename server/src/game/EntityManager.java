@@ -47,7 +47,7 @@ public class EntityManager {
     public Entity createEntity(UClient client) {
         int entityId = generateEntityId();
         UUID uuid = client == null ? UUID.randomUUID() : client.getUuid();
-        double[] position = new double[] {0,0};
+        float[] position = new float[] {0,0};
         Entity entity = new Entity(uuid, entityId, position, 0);
         entities.put(entityId, entity);
         entityIds.put(uuid, entityId);
@@ -63,7 +63,7 @@ public class EntityManager {
     }
 
     public boolean moved(UUID client, float[] currentPos) {
-        double[] oldPos = entities.get(getEntityId(client)).position;
+        float[] oldPos = entities.get(getEntityId(client)).position;
         return !(oldPos[0] == currentPos[0] && oldPos[1] == currentPos[1]);
     }
 
@@ -86,7 +86,7 @@ public class EntityManager {
 
     public static class Entity {
 
-        private Entity(UUID uuid, int entityId, double[] position, int moveDirection) {
+        private Entity(UUID uuid, int entityId, float[] position, int moveDirection) {
             this.uuid = uuid;
             this.entityId = entityId;
             this.position = position;
@@ -96,7 +96,7 @@ public class EntityManager {
 
         private UUID uuid;
         private int entityId;
-        private double[] position;
+        private float[] position;
         private int moveDirection;
         private boolean moving;
         private int weapon;
@@ -105,12 +105,12 @@ public class EntityManager {
             return entityId;
         }
 
-        public void setPosition(double[] position) {
+        public void setPosition(float[] position) {
             this.position = position;
             EntityManager.instance.moved.add(this);
         }
 
-        public void setMoveDirection(int direction) {
+        public void setDirection(int direction) {
             this.moveDirection = direction;
             EntityManager.instance.turned.add(this);
         }
@@ -127,11 +127,11 @@ public class EntityManager {
             this.moving = moving;
         }
 
-        public double[] getPosition() {
+        public float[] getPosition() {
             return position;
         }
 
-        public float getMoveDirection() {
+        public int getDirection() {
             return moveDirection;
         }
 

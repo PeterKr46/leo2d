@@ -1,4 +1,4 @@
-package leo2d;
+package leo2d.core;
 
 public class Debug {
 	public static void log(Object data) {

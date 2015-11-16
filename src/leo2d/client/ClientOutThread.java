@@ -1,8 +1,7 @@
 package leo2d.client;
 
-import game.packet.EntityPositionPacket;
-import leo2d.Transform;
 import leo2d.component.ThreadedComponent;
+import leo2d.core.Transform;
 import net.packet.UPacket;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -22,10 +21,14 @@ public class ClientOutThread extends ThreadedComponent {
     @Override
     public void threadedUpdate() {
         if(client != null && client.isConnected()) {
-            UPacket send = outQueue.peek();
-            if(send != null) {
-                outQueue.remove(send);
-                client.send(send.build());
+            int num = 10;
+            while(num >= 0 && outQueue.size() > 0) {
+                UPacket send = outQueue.peek();
+                if (send != null) {
+                    outQueue.remove(send);
+                    client.send(send.build());
+                }
+                num--;
             }
         }
     }

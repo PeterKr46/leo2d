@@ -162,6 +162,10 @@ public class Vector {
 		return add(-x, -y);
 	}
 
+	public static boolean isEqual(Vector a, Vector b) {
+		return a.x == b.x && a.y == b.y;
+	}
+
 	public static class FixedVector extends Vector {
 
 		public FixedVector(double x, double y) {

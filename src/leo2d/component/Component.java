@@ -1,6 +1,6 @@
 package leo2d.component;
 
-import leo2d.Transform;
+import leo2d.core.Transform;
 
 public abstract class Component {
 	public abstract void update();

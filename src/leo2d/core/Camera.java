@@ -3,9 +3,11 @@ package leo2d.core;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
-import leo2d.Transform;
+import leo2d.editor.EditorController;
+import leo2d.editor.PositioningController;
 import leo2d.gl.VoltImg;
 import leo2d.input.Input;
+import leo2d.math.Rect;
 import leo2d.math.Segment;
 import leo2d.math.Vector;
 import leo2d.util.data.PriorityQueue;
@@ -56,6 +58,13 @@ public class Camera implements GLEventListener {
 		diff.setX(diff.x / (verticalSize * aspectRatio));
 		diff.setY(diff.y / verticalSize);
 		return diff;
+	}
+
+	public Vector localizePixelPos(Vector pixelPos) {
+		if(pixelPos == null) {
+			return null;
+		}
+		return new Vector((pixelPos.x/screenWidth), (pixelPos.y/screenHeight)).multiply(2).subtract(1,1);
 	}
 
 	public VoltImg getVolty() {
@@ -110,7 +119,9 @@ public class Camera implements GLEventListener {
 			}
 		});
 
-		aspectRatio = ((float)canvas.getWidth()) / canvas.getHeight();	
+		aspectRatio = ((float)canvas.getWidth()) / canvas.getHeight();
+		// Initialize Positioning Controller
+		new PositioningController();
 	}
 	
 	public Vector getPosition() {
@@ -195,19 +206,29 @@ public class Camera implements GLEventListener {
 		drawGrid(drawable);
 		List<Transform> transforms = Transform.getAllTransforms();
 
+		// Create Render order
 		PriorityQueue<Transform> renderOrder = new PriorityQueue<>();
 		for(Transform transform : transforms) {
 			if(transform.hasRenderer()) {
 				renderOrder.enqueue(transform, -(transform.getRenderer().getLayer() * 1000 + transform.getRenderer().getIndexInLayer()));
 			}
 		}
+		// Render as ordered.
 		Transform t = renderOrder.dequeue();
 		while(t != null) {
 			t.update(drawable);
 			t = renderOrder.dequeue();
 		}
+
+		// Call update() on all Components
 		for(Transform transform : transforms) {
 			transform.updateComponents(drawable);
+		}
+
+		// Run Editor Controllers
+
+		for(EditorController controller : EditorController.getControllers()) {
+			controller.update();
 		}
 	}
 	
@@ -246,6 +267,12 @@ public class Camera implements GLEventListener {
 			volty.line(new Vector(i, min.y), new Vector(i, max.y), new double[] {color, color, color, alpha});
 		}
 		
+	}
+
+	public Rect getAABB() {
+		Vector min = getMin();
+		Vector max = getMax();
+		return new Rect(min, max);
 	}
 	
 	public Segment[] getBounds() {

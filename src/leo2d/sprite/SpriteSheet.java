@@ -1,6 +1,6 @@
 package leo2d.sprite;
 
-import leo2d.Debug;
+import leo2d.core.Debug;
 import leo2d.math.Rect;
 import leo2d.math.Vector;
 

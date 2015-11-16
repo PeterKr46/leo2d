@@ -1,10 +1,12 @@
 package leo2d.characters;
 
-import leo2d.Transform;
+import game.packet.EntityMovePacket;
 import leo2d.animation.Animation;
 import leo2d.animation.Animator;
+import leo2d.client.ClientOutThread;
 import leo2d.component.Component;
 import leo2d.core.Camera;
+import leo2d.core.Transform;
 import leo2d.input.Input;
 import leo2d.math.Vector;
 import leo2d.util.MathUtil;
@@ -38,9 +40,11 @@ public class Player extends Component {
     private Vector target = Vector.zero();
     private Vector origin = Vector.zero();
     private long start = 0;
-    public float movementSpeed = 3f;
+    private float movementSpeed = 3f;
     public Animator animator;
     public Animation horizontal, up, down, idle;
+
+    private Vector lastSent = target.clone();
 
     public Vector nextTarget = new Vector(0,0);
 
@@ -76,14 +80,20 @@ public class Player extends Component {
         double pc = movementSpeed*timeSince;
         transform.position = new Vector(MathUtil.lerp(pc, origin.x, target.x), MathUtil.lerp(pc, origin.y, target.y));
 
+        if(!Vector.isEqual(target, lastSent)) {
+            ((ClientOutThread) transform.getComponent(ClientOutThread.class)).outQueue.add(new EntityMovePacket(entityId, new float[]{(float) target.x, (float) target.y}, getFaceDirection()));
+            lastSent = target.clone();
+        }
+
+
         Vector delta = Vector.zero();
-        if (Input.isKeyDown('w')) {
+        if (Input.getKey('w')) {
             delta = new Vector(0, 1);
-        } else if (Input.isKeyDown('s')) {
+        } else if (Input.getKey('s')) {
             delta = new Vector(0, -1);
-        } else if (Input.isKeyDown('d')) {
+        } else if (Input.getKey('d')) {
             delta = new Vector(1, 0);
-        } else if (Input.isKeyDown('a')) {
+        } else if (Input.getKey('a')) {
             delta = new Vector(-1, 0);
         }
         if(delta.x != 0 || delta.y != 0) {
@@ -108,6 +118,7 @@ public class Player extends Component {
                 animator.animation = dir.y > 0 ? up : dir.y < 0 ? down : idle;
             }
         }
+
         if(!Camera.main().debug()) {
             Camera.main().setPosition(transform.position);
         }

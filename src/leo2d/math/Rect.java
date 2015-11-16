@@ -12,6 +12,10 @@ public class Rect {
 		min = new Vector(xMin, yMin);
 		max = new Vector(xMin + width, yMin + height);
 	}
+	public Rect(Vector min, Vector max) {
+		this.min = min.clone();
+		this.max = max.clone();
+	}
 	
 	public double getMinX() {
 		return min.x;
@@ -61,6 +65,21 @@ public class Rect {
 		max.y = y;
 	}
 
+	public boolean intersects(Rect other) {
+		return intersects(other, false);
+	}
+
+	private boolean intersects(Rect other, boolean oneDir) {
+		return other != null && (contains(other.min) || contains(other.max) || contains(other.max.x, other.min.y) || contains(other.min.x, other.max.y) || (!oneDir && other.intersects(this, true)));
+	}
+
+	public boolean contains(double x, double y) {
+		return x >= min.x && x <= max.x && y >= min.y && y <= max.y;
+	}
+
+	public boolean contains(Vector v) {
+		return v != null && v.x >= min.x && v.x <= max.x && v.y >= min.y && v.y <= max.y;
+	}
 
 	@Override
 	public Rect clone() {

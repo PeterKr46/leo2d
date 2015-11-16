@@ -10,10 +10,9 @@ public class Registry {
     public static Class[] packets = new Class[] {
             DisconnectPacket.class,
             HeartbeatPacket.class,
-            EntityPositionPacket.class,
+            EntityMovePacket.class,
             EntityIdPacket.class,
             EntitySpawnPacket.class,
-            EntityDirectionPacket.class,
             EntityAliasPacket.class
     };
 }

@@ -1,7 +1,7 @@
 package leo2d.component;
 
-import leo2d.Transform;
 import leo2d.core.Camera;
+import leo2d.core.Transform;
 import leo2d.math.Vector;
 
 public class Rotate extends Component {

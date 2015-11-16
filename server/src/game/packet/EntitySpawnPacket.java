@@ -2,6 +2,7 @@ package game.packet;
 
 import leo2d.characters.CharacterCreator;
 import leo2d.characters.Player;
+import leo2d.math.Vector;
 import net.client.UClient;
 import net.packet.UPacket;
 import net.server.UServer;
@@ -55,6 +56,8 @@ public class EntitySpawnPacket extends UPacket {
         int id = ByteBuffer.wrap(data, 0, 4).order(ByteOrder.LITTLE_ENDIAN).getInt();
         float x = ByteBuffer.wrap(data, 4, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
         float y = ByteBuffer.wrap(data, 8, 4).order(ByteOrder.LITTLE_ENDIAN).getFloat();
+        position = new float[]{x,y};
+        entityId = id;
         UServer.log("[DEPR] Entity #" + id + " spawned at (" + x + " " + y + ")");
     }
 
@@ -66,7 +69,7 @@ public class EntitySpawnPacket extends UPacket {
         if(id == Player.getInstance().entityId) {
             Player.getInstance().teleport(x,y);
         } else {
-            CharacterCreator.createNPC();
+            CharacterCreator.createNPC("NPC", id).position = new Vector(x,y);
         }
     }
 }

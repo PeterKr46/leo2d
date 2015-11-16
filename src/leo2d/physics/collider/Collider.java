@@ -1,7 +1,7 @@
 package leo2d.physics.collider;
 
-import leo2d.Transform;
 import leo2d.component.Component;
+import leo2d.core.Transform;
 import leo2d.math.Ray;
 import leo2d.math.Rect;
 import leo2d.physics.Physics;

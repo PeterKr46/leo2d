@@ -1,29 +1,61 @@
 package leo2d.input;
 
 import leo2d.core.Camera;
+import leo2d.editor.EditorController;
 import leo2d.math.Vector;
 
 import javax.swing.event.MouseInputListener;
 import java.awt.event.*;
 import java.util.HashMap;
 
-public class Input implements MouseMotionListener, MouseInputListener, MouseWheelListener, KeyListener {
+public class Input extends EditorController implements MouseMotionListener, MouseInputListener, MouseWheelListener, KeyListener {
+
+	public static enum KeyState {
+		DOWN, HELD, RELEASED, CLICK
+	}
 	
 	private static Vector mousePosition = new Vector(0,0);
-	private static boolean lMouse;
-	
-	private static HashMap<Character, Boolean> keysPressed = new HashMap<Character, Boolean>();
-	
+
+	private static HashMap<Integer, KeyState> keysPressed = new HashMap<>();
+
 	public static Vector getMousePosition() {
 		return mousePosition.clone();
 	}
 	
-	public static boolean isLMouseDown() {
-		return lMouse;
+	public static boolean getMouseButton(int button) {
+		if(!keysPressed.containsKey(-button)) return false;
+		KeyState state = keysPressed.get(-button);
+		return state == KeyState.HELD || state == KeyState.DOWN;
 	}
 
-	public static boolean isKeyDown(char c) {
-		return keysPressed.containsKey(c) && keysPressed.get(c);
+	public static boolean getMouseButtonDown(int button) {
+		if(!keysPressed.containsKey(-button)) return false;
+		KeyState state = keysPressed.get(-button);
+		return state == KeyState.CLICK || state == KeyState.DOWN;
+	}
+
+	public static boolean getMouseButtonUp(int button) {
+		return keysPressed.containsKey(-button) && keysPressed.get(-button) == KeyState.RELEASED;
+	}
+
+	public static boolean getKey(char c) {
+		if(!keysPressed.containsKey((int)c)) return false;
+		KeyState state = keysPressed.get((int)c);
+		return state == KeyState.HELD || state == KeyState.DOWN;
+	}
+
+	public static boolean getKeyDown(char c) {
+		if(!keysPressed.containsKey((int)c)) return false;
+		KeyState state = keysPressed.get((int)c);
+		return state == KeyState.CLICK || state == KeyState.DOWN;
+	}
+
+	public static boolean getKeyUp(char c) {
+		return keysPressed.containsKey((int)c) && keysPressed.get((int)c) == KeyState.RELEASED;
+	}
+
+	public static KeyState getRawState(int id) {
+		return keysPressed.get(id);
 	}
 	
 	@Override
@@ -47,23 +79,19 @@ public class Input implements MouseMotionListener, MouseInputListener, MouseWhee
 	@Override
 	public void mouseClicked(MouseEvent mouseEvent) {
 		mousePosition = new Vector(mouseEvent.getX(), Camera.main().getScreenHeight() - mouseEvent.getY());
+		keysPressed.put(-mouseEvent.getButton(), KeyState.CLICK);
 	}
 
 	@Override
 	public void mousePressed(MouseEvent mouseEvent) {
 		mousePosition = new Vector(mouseEvent.getX(), Camera.main().getScreenHeight() - mouseEvent.getY());
-		if(mouseEvent.getButton() == 1) {
-			lMouse = true;
-		}
+		keysPressed.put(-mouseEvent.getButton(), KeyState.DOWN);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent mouseEvent) {
 		mousePosition = new Vector(mouseEvent.getX(), Camera.main().getScreenHeight() - mouseEvent.getY());
-		if(mouseEvent.getButton() == 1) {
-			lMouse = false;
-			//Debug.dragging = null;
-		}
+		keysPressed.put(-mouseEvent.getButton(), KeyState.RELEASED);
 	}
 
 	@Override
@@ -78,7 +106,7 @@ public class Input implements MouseMotionListener, MouseInputListener, MouseWhee
 
 	@Override
 	public void keyTyped(KeyEvent keyEvent) {
-
+		keysPressed.put((int)keyEvent.getKeyChar(), KeyState.HELD);
 	}
 
 	@Override
@@ -86,12 +114,12 @@ public class Input implements MouseMotionListener, MouseInputListener, MouseWhee
 		if(keyEvent.getKeyCode() == 113) { // 113 = F2
 			Camera.main().toggleDebug();
 		}
-		keysPressed.put(keyEvent.getKeyChar(), true);
+		keysPressed.put((int)keyEvent.getKeyChar(), KeyState.DOWN);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent keyEvent) {
-		keysPressed.put(keyEvent.getKeyChar(), false);
+		keysPressed.put((int)keyEvent.getKeyChar(), KeyState.RELEASED);
 	}
 
 	@Override
@@ -99,6 +127,24 @@ public class Input implements MouseMotionListener, MouseInputListener, MouseWhee
 		Camera c = Camera.main();
 		if(c.debug()) {
 			c.setVerticalSize(c.getVerticalSize() + e.getUnitsToScroll() * 0.05f);
+		}
+	}
+
+	@Override
+	public void update() {
+		for(Integer id : keysPressed.keySet().toArray(new Integer[keysPressed.size()])) {
+			KeyState prev = keysPressed.get(id);
+			switch(prev) {
+				case DOWN:
+					keysPressed.put(id, KeyState.HELD);
+					break;
+				case RELEASED:
+					keysPressed.remove(id);
+					break;
+				case CLICK:
+					keysPressed.put(id, KeyState.RELEASED);
+					break;
+			}
 		}
 	}
 }

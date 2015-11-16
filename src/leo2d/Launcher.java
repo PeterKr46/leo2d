@@ -4,6 +4,7 @@ import leo2d.animation.Animation;
 import leo2d.animation.Animator;
 import leo2d.characters.CharacterCreator;
 import leo2d.core.Camera;
+import leo2d.core.Transform;
 import leo2d.math.Vector;
 import leo2d.sprite.Sprite;
 import leo2d.sprite.SpriteSheet;

@@ -1,6 +1,6 @@
 package leo2d.physics.collider;
 
-import leo2d.Transform;
+import leo2d.core.Transform;
 import leo2d.math.Segment;
 import leo2d.math.Vector;
 

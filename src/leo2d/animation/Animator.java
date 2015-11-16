@@ -1,8 +1,8 @@
 package leo2d.animation;
 
-import leo2d.Transform;
 import leo2d.component.Component;
 import leo2d.core.Camera;
+import leo2d.core.Transform;
 import leo2d.util.Callback;
 
 
