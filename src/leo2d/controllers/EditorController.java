@@ -1,4 +1,4 @@
-package leo2d.editor;
+package leo2d.controllers;
 
 import java.util.ArrayList;
 import java.util.List;

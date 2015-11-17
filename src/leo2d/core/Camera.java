@@ -3,8 +3,9 @@ package leo2d.core;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
-import leo2d.editor.EditorController;
-import leo2d.editor.PositioningController;
+import leo2d.controllers.EditorController;
+import leo2d.controllers.LevelEditorController;
+import leo2d.controllers.PositioningController;
 import leo2d.gl.VoltImg;
 import leo2d.input.Input;
 import leo2d.math.Rect;
@@ -112,6 +113,7 @@ public class Camera implements GLEventListener {
 		screenHeight = 480;
 
 		// Initialize Positioning Controller
+		new LevelEditorController();
 		new PositioningController();
 
 		// Initialize Input Controller
@@ -234,8 +236,8 @@ public class Camera implements GLEventListener {
 		for(Transform transform : transforms) {
 			transform.updateComponents(drawable);
 		}
-		// Run Editor Controllers
 
+		// Run Editor Controllers
 		for(EditorController controller : EditorController.getControllers()) {
 			controller.update();
 		}

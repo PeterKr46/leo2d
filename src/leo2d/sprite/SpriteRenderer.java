@@ -9,7 +9,7 @@ import leo2d.math.Rect;
 import leo2d.math.Vector;
 
 public class SpriteRenderer {
-	private boolean enabled = true;
+	public boolean enabled = true;
 	private Transform transform;
 	private int layer = 0, layerIndex = 0;
 	public Sprite sprite;
@@ -65,7 +65,7 @@ public class SpriteRenderer {
 		}
 		VoltImg volty = Camera.main().getVolty();
 		Rect aabb = getAABB();
-		if(sprite == null || sprite.getTexture() == null || !aabb.intersects(Camera.main().getAABB())) {
+		if(!enabled ||sprite == null || sprite.getTexture() == null || !aabb.intersects(Camera.main().getAABB())) {
 			return;
 		}
 		Texture tex = sprite.getTexture();

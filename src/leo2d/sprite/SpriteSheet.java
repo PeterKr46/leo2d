@@ -28,8 +28,8 @@ public class SpriteSheet {
 
     public SpriteSheet slice(int width, int height) {
         sprites.clear();
-        for(int x = 0; x + width <= texture.getWidth(); x += width) {
-            for(int y = 0; y + height <= texture.getHeight(); y += height) {
+        for(int y = 0; y + height <= texture.getHeight(); y += height) {
+            for(int x = 0; x + width <= texture.getWidth(); x += width) {
                 sprites.add(new Sprite(texture, new Rect(x,y, width, height)));
             }
         }

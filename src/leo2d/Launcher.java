@@ -47,7 +47,7 @@ public class Launcher {
 		fire.addRenderer();
 		((Animator)fire.addComponent(Animator.class)).animation = fireAnim;
 
-		CharacterCreator.createPlayer("87.168.94.200", 2000);
+		CharacterCreator.createPlayer("91.41.91.91", 2000);
 
 	}
 }

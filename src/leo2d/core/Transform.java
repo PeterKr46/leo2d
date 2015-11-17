@@ -31,6 +31,12 @@ public class Transform {
 	public Vector scale = new Vector(1,1);
 	public float rotation = 0;
 
+	public Transform parent;
+	public Vector localPosition = Vector.zero();
+	public float localRotation = 0;
+
+	public double[] color = new double[] {1,1,1};
+
 	private List<Component> components = new ArrayList<Component>();
 	private SpriteRenderer renderer;
 
@@ -125,6 +131,10 @@ public class Transform {
 	}
 
 	public void updateComponents(GLAutoDrawable drawable) {
+		if(parent != null) {
+			position = parent.getPosition().add(localPosition);
+			rotation = parent.rotation + localRotation;
+		}
 		drawArrows(drawable);
 		for(Component component : components.toArray(new Component[components.size()])) {
 			component.update();
@@ -167,7 +177,7 @@ public class Transform {
 			scale.x = 1 / scale.x;
 			scale.y = 1 / scale.y;
 
-			volty.filledCircle(center, len/8, 0.1f);
+			volty.filledCircle(center, len/8, 0.1f, color);
 		}
 	}
 

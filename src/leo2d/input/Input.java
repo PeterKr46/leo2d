@@ -1,7 +1,7 @@
 package leo2d.input;
 
+import leo2d.controllers.EditorController;
 import leo2d.core.Camera;
-import leo2d.editor.EditorController;
 import leo2d.math.Vector;
 
 import javax.swing.event.MouseInputListener;
@@ -110,7 +110,9 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 
 	@Override
 	public void keyTyped(KeyEvent keyEvent) {
-		keysPressed.put((int)keyEvent.getKeyChar(), KeyState.HELD);
+		if(!getKeyDown(keyEvent.getKeyChar())) {
+			keysPressed.put((int) keyEvent.getKeyChar(), KeyState.HELD);
+		}
 	}
 
 	@Override
