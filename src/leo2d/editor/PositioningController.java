@@ -1,7 +1,6 @@
 package leo2d.editor;
 
 import leo2d.core.Camera;
-import leo2d.core.Debug;
 import leo2d.core.Transform;
 import leo2d.input.Input;
 import leo2d.math.Rect;
@@ -15,11 +14,14 @@ public class PositioningController extends EditorController {
     private Transform moving;
     public double range = 0.025;
 
+    public PositioningController() {
+        super();
+    }
+
     @Override
     public void update() {
         if(!Camera.main().debug())
             return;
-        Debug.log(Input.getRawState('w'));
         Rect cameraBounds = Camera.main().getAABB();
         Vector mousePos = Camera.main().localizePixelPos(Input.getMousePosition());
         if(Input.getMouseButtonDown(1)) {
@@ -27,9 +29,25 @@ public class PositioningController extends EditorController {
                 if(cameraBounds.contains(t.position)) {
                     Vector camPos = Camera.main().localize(t.position);
                     if(Vector.difference(mousePos,camPos).sqrMagnitude() <= Math.pow(range,2)) {
-                        Debug.log(t.name + " clicked.");
+                        moving = t;
+                        break;
                     }
                 }
+            }
+        } else if(Input.getMouseButtonUp(1)) {
+            moving = null;
+        }
+        if(moving != null) {
+            moving.position = Camera.main().toWorldPos(mousePos);
+            if(Input.getKey('q')) {
+                moving.position.x = Math.round(moving.position.x);
+                moving.position.y = Math.round(moving.position.y);
+            }
+        } else {
+            Camera c = Camera.main();
+            if(c.debug() && Input.getMouseButton(1)) {
+                Vector d = Input.getMouseDelta();
+                c.setPosition(c.getPosition().subtract(d));
             }
         }
     }

@@ -13,13 +13,22 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 	public static enum KeyState {
 		DOWN, HELD, RELEASED, CLICK
 	}
-	
+
+	public Input() {
+		super();
+	}
+
+	private static Vector lastMousePosition = new Vector(0,0);
 	private static Vector mousePosition = new Vector(0,0);
 
 	private static HashMap<Integer, KeyState> keysPressed = new HashMap<>();
 
 	public static Vector getMousePosition() {
 		return mousePosition.clone();
+	}
+
+	public static Vector getMouseDelta() {
+		return Vector.difference(lastMousePosition, mousePosition).multiply(Camera.main().deltatime()).clone();
 	}
 	
 	public static boolean getMouseButton(int button) {
@@ -59,21 +68,16 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 	}
 	
 	@Override
-	public void mouseDragged(MouseEvent event) {
+	public void mouseDragged(MouseEvent mouseEvent) {
 		Camera c = Camera.main();
-		double dx = event.getX() - mousePosition.x;
-		double dy = event.getY() - (c.getScreenHeight() - mousePosition.y);
-		mousePosition = new Vector(event.getX(), c.getScreenHeight() - event.getY());
-		double px = (dx / c.getScreenWidth()) * c.getHorizontalSize();
-		double py = (dy / c.getScreenHeight()) * c.getVerticalSize();
-		if(c.debug()) {
-			c.setPosition(c.getPosition().add(-px, py));
-		}
+		mousePosition = new Vector(mouseEvent.getX(), c.getScreenHeight() - mouseEvent.getY());
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent mouseEvent) {
+		Camera c = Camera.main();
 		mousePosition = new Vector(mouseEvent.getX(), Camera.main().getScreenHeight() - mouseEvent.getY());
+		mousePosition = new Vector(mouseEvent.getX(), c.getScreenHeight() - mouseEvent.getY());
 	}
 
 	@Override
@@ -146,5 +150,6 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 					break;
 			}
 		}
+		lastMousePosition = mousePosition.clone();
 	}
 }

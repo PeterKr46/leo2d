@@ -67,6 +67,12 @@ public class Camera implements GLEventListener {
 		return new Vector((pixelPos.x/screenWidth), (pixelPos.y/screenHeight)).multiply(2).subtract(1,1);
 	}
 
+	public Vector toWorldPos(Vector localPos) {
+		Vector v = getPosition();
+		v.add(localPos.x * getHorizontalSize(), localPos.y * getVerticalSize());
+		return v;
+	}
+
 	public VoltImg getVolty() {
 		return volty;
 	}
@@ -88,21 +94,27 @@ public class Camera implements GLEventListener {
 		glCapabilities = new GLCapabilities(glProfile);
 		canvas = new GLCanvas(glCapabilities);
 
+		// Create Volty Instance
 		volty = new VoltImg();
 		volty.bind(this);
 
 		canvas.addGLEventListener(this);
 
+		// Initialize Animator
 		animator = new FPSAnimator(canvas, 60);
 		animator.start();
 
+		// Initialize Frame/Window
 		Image icon = Toolkit.getDefaultToolkit().getImage("assets/icon.png");
 		windowFrame = new Frame("Leo2D");
 		windowFrame.setSize(800, 480);
 		screenWidth = 800;
 		screenHeight = 480;
-		
-		
+
+		// Initialize Positioning Controller
+		new PositioningController();
+
+		// Initialize Input Controller
 		Input input = new Input();
 		canvas.addMouseMotionListener(input);
 		canvas.addMouseListener(input);
@@ -120,8 +132,6 @@ public class Camera implements GLEventListener {
 		});
 
 		aspectRatio = ((float)canvas.getWidth()) / canvas.getHeight();
-		// Initialize Positioning Controller
-		new PositioningController();
 	}
 	
 	public Vector getPosition() {
@@ -224,7 +234,6 @@ public class Camera implements GLEventListener {
 		for(Transform transform : transforms) {
 			transform.updateComponents(drawable);
 		}
-
 		// Run Editor Controllers
 
 		for(EditorController controller : EditorController.getControllers()) {

@@ -13,6 +13,9 @@ public class SpriteRenderer {
 	private Transform transform;
 	private int layer = 0, layerIndex = 0;
 	public Sprite sprite;
+
+	public boolean autoAssignIndex = true;
+
 	public SpriteRenderer(Transform transform) {
 		this.transform = transform;	
 	}
@@ -57,9 +60,11 @@ public class SpriteRenderer {
 	}
 
 	public void draw() {
+		if(autoAssignIndex) {
+			setIndexInLayer((int) (transform.position.y * 100));
+		}
 		VoltImg volty = Camera.main().getVolty();
 		Rect aabb = getAABB();
-		aabb.visualize();
 		if(sprite == null || sprite.getTexture() == null || !aabb.intersects(Camera.main().getAABB())) {
 			return;
 		}
