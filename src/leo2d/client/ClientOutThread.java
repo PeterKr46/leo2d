@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class ClientOutThread extends ThreadedComponent {
 
-    public ConcurrentLinkedQueue<UPacket> outQueue = new ConcurrentLinkedQueue<>();
+    public static ConcurrentLinkedQueue<UPacket> outQueue = new ConcurrentLinkedQueue<>();
 
     public Client client;
     public ClientOutThread(Transform transform) {

@@ -13,6 +13,7 @@ public class Registry {
             EntityMovePacket.class,
             EntityIdPacket.class,
             EntitySpawnPacket.class,
-            EntityAliasPacket.class
+            EntityAliasPacket.class,
+            ChatPacket.class
     };
 }

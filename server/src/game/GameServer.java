@@ -1,9 +1,6 @@
 package game;
 
-import game.packet.EntityAliasPacket;
-import game.packet.EntityIdPacket;
-import game.packet.EntityMovePacket;
-import game.packet.EntitySpawnPacket;
+import game.packet.*;
 import net.client.UClient;
 import net.packet.UPacket;
 import net.server.UServer;
@@ -35,11 +32,13 @@ public class GameServer extends UServer {
         UPacket spawnPacket = new EntitySpawnPacket(id, entity.getPosition());
         client.sendPacket(new EntityIdPacket(id));
         client.sendPacket(spawnPacket);
+        UPacket spawnMsgPacket = new ChatPacket(client.getAlias() + " has joined the game.");
         for(UClient other : clients) {
             if(client != other) {
                 log("Sent spawn packet to " + EntityManager.getInstance().getEntityId(other.getUuid()));
                 EntityManager.Entity otherEnt = EntityManager.getInstance().getEntity(other.getUuid());
                 other.sendPacket(spawnPacket);
+                other.sendPacket(spawnMsgPacket);
                 client.sendPacket(new EntitySpawnPacket(otherEnt.getEntityId()));
                 client.sendPacket(new EntityMovePacket(otherEnt.getEntityId(), otherEnt.getPosition(), otherEnt.getDirection()));
                 client.sendPacket(new EntityAliasPacket(otherEnt.getEntityId(), other.getAlias()));

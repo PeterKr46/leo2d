@@ -3,6 +3,7 @@ package leo2d.controllers;
 import leo2d.core.Transform;
 import leo2d.input.Input;
 
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 /**
@@ -15,7 +16,7 @@ public class LevelEditorController extends EditorController {
 
     @Override
     public void update() {
-        if(Input.getKeyDown('e') && PositioningController.moving != null) {
+        if(Input.getKeyDown(KeyEvent.VK_E) && PositioningController.moving != null) {
             if(store.contains(PositioningController.moving)) {
                 PositioningController.moving.color = new double[]{1,1,1};
                 store.remove(PositioningController.moving);

@@ -16,7 +16,7 @@ public class ByteConverter {
         String content = "";
         try {
             tmp = new String(bytes, "UTF-8");
-            for(int i = 0; i < tmp.length(); i+= 2) {
+            for(int i = 0; i < tmp.length(); i++) {
                 content += tmp.charAt(i);
             }
         } catch (UnsupportedEncodingException e) {

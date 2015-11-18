@@ -1,12 +1,12 @@
 package leo2d.controllers;
 
-import leo2d.characters.Player;
 import leo2d.core.Camera;
 import leo2d.core.Transform;
 import leo2d.input.Input;
 import leo2d.math.Rect;
 import leo2d.math.Vector;
-import leo2d.sprite.font.Font;
+
+import java.awt.event.KeyEvent;
 
 /**
  * Created by Peter on 16.11.2015.
@@ -15,7 +15,6 @@ public class PositioningController extends EditorController {
 
     public static Transform moving;
     public static double range = 0.025;
-    Font font = Font.load("assets/Font.png");
 
     public PositioningController() {
         super();
@@ -24,7 +23,6 @@ public class PositioningController extends EditorController {
     @Override
     public void update() {
 
-        font.write(Camera.main().getMin(), Player.getInstance().getTarget().toString(), 0.5, 0);
 
 
         if(!Camera.main().debug())
@@ -46,7 +44,7 @@ public class PositioningController extends EditorController {
         }
         if(moving != null) {
             moving.position = Camera.main().toWorldPos(mousePos);
-            if(Input.getKey('q')) {
+            if(Input.getKey(KeyEvent.VK_Q)) {
                 moving.position.x = Math.round(moving.position.x);
                 moving.position.y = Math.round(moving.position.y);
             }

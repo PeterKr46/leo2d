@@ -3,6 +3,7 @@ package leo2d.core;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
+import leo2d.controllers.ChatController;
 import leo2d.controllers.EditorController;
 import leo2d.controllers.LevelEditorController;
 import leo2d.controllers.PositioningController;
@@ -115,6 +116,7 @@ public class Camera implements GLEventListener {
 		// Initialize Positioning Controller
 		new LevelEditorController();
 		new PositioningController();
+		new ChatController();
 
 		// Initialize Input Controller
 		Input input = new Input();

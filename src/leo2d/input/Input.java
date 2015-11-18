@@ -47,24 +47,66 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 		return keysPressed.containsKey(-button) && keysPressed.get(-button) == KeyState.RELEASED;
 	}
 
-	public static boolean getKey(char c) {
-		if(!keysPressed.containsKey((int)c)) return false;
-		KeyState state = keysPressed.get((int)c);
+	public static boolean getKey(int c) {
+		if(!keysPressed.containsKey((c))) return false;
+		KeyState state = keysPressed.get(c);
 		return state == KeyState.HELD || state == KeyState.DOWN;
 	}
 
-	public static boolean getKeyDown(char c) {
-		if(!keysPressed.containsKey((int)c)) return false;
-		KeyState state = keysPressed.get((int)c);
+	public static boolean getKeyDown(int c) {
+		if(!keysPressed.containsKey(c)) return false;
+		KeyState state = keysPressed.get(c);
 		return state == KeyState.CLICK || state == KeyState.DOWN;
 	}
 
-	public static boolean getKeyUp(char c) {
-		return keysPressed.containsKey((int)c) && keysPressed.get((int)c) == KeyState.RELEASED;
+	public static boolean getKeyUp(int c) {
+		return keysPressed.containsKey(c) && keysPressed.get(c) == KeyState.RELEASED;
 	}
 
 	public static KeyState getRawState(int id) {
 		return keysPressed.get(id);
+	}
+
+	public static String getPressedKey() {
+		String allowed = "0123456789 QWERTZUIOPÜASDFGHJKLÖÄYXCVBNM.,:-?!";
+		String raw = "";
+		boolean shiftMask = false;
+		for(int id : keysPressed.keySet()) {
+			if(id > 0 && keysPressed.get(id) == KeyState.DOWN) {
+				raw = KeyEvent.getKeyText(id);
+				if(!allowed.contains(raw.toUpperCase())) {
+					raw = "";
+				}
+				switch(id) {
+					case KeyEvent.VK_SPACE:
+						raw = " ";
+						break;
+					case KeyEvent.VK_MINUS:
+						raw = "-";
+						break;
+					case KeyEvent.VK_PERIOD:
+						raw = ".";
+						break;
+					case KeyEvent.VK_COMMA:
+						raw = ",";
+						break;
+					case KeyEvent.VK_SHIFT:
+						shiftMask = true;
+				}
+			}
+		}
+		if(shiftMask) {
+			if (getKeyDown(KeyEvent.VK_9)) {
+				raw = ")";
+			} else if (getKeyDown(KeyEvent.VK_8)) {
+				raw = "(";
+			} else if (getKeyDown(KeyEvent.VK_PERIOD)) {
+				raw = ":";
+			} else if (getKeyDown(KeyEvent.VK_MINUS)) {
+				raw = "_";
+			}
+		}
+		return raw;
 	}
 	
 	@Override
@@ -110,8 +152,8 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 
 	@Override
 	public void keyTyped(KeyEvent keyEvent) {
-		if(!getKeyDown(keyEvent.getKeyChar())) {
-			keysPressed.put((int) keyEvent.getKeyChar(), KeyState.HELD);
+		if(!getKeyDown(keyEvent.getKeyCode())) {
+			keysPressed.put(keyEvent.getKeyCode(), KeyState.HELD);
 		}
 	}
 
@@ -120,7 +162,7 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 		if(keyEvent.getKeyCode() == 113) { // 113 = F2
 			Camera.main().toggleDebug();
 		}
-		keysPressed.put((int)keyEvent.getKeyChar(), KeyState.DOWN);
+		keysPressed.put(keyEvent.getKeyCode(), KeyState.DOWN);
 	}
 
 	@Override
@@ -143,6 +185,9 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 			switch(prev) {
 				case DOWN:
 					keysPressed.put(id, KeyState.HELD);
+					break;
+				case HELD:
+					keysPressed.put(id, KeyState.RELEASED);
 					break;
 				case RELEASED:
 					keysPressed.remove(id);

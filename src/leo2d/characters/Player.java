@@ -5,11 +5,14 @@ import leo2d.animation.Animation;
 import leo2d.animation.Animator;
 import leo2d.client.ClientOutThread;
 import leo2d.component.Component;
+import leo2d.controllers.ChatController;
 import leo2d.core.Camera;
 import leo2d.core.Transform;
 import leo2d.input.Input;
 import leo2d.math.Vector;
 import leo2d.util.MathUtil;
+
+import java.awt.event.KeyEvent;
 
 /**
  * Created by Peter on 09.11.2015.
@@ -87,14 +90,16 @@ public class Player extends Component {
 
 
         Vector delta = Vector.zero();
-        if (Input.getKey('w')) {
-            delta = new Vector(0, 1);
-        } else if (Input.getKey('s')) {
-            delta = new Vector(0, -1);
-        } else if (Input.getKey('d')) {
-            delta = new Vector(1, 0);
-        } else if (Input.getKey('a')) {
-            delta = new Vector(-1, 0);
+        if(!ChatController.chatActive) {
+            if (Input.getKey(KeyEvent.VK_W)) {
+                delta = new Vector(0, 1);
+            } else if (Input.getKey(KeyEvent.VK_S)) {
+                delta = new Vector(0, -1);
+            } else if (Input.getKey(KeyEvent.VK_D)) {
+                delta = new Vector(1, 0);
+            } else if (Input.getKey(KeyEvent.VK_A)) {
+                delta = new Vector(-1, 0);
+            }
         }
         if(delta.x != 0 || delta.y != 0) {
             if(Vector.isOpposite(delta, getDirection()) && pc > 0.3) {
@@ -103,7 +108,7 @@ public class Player extends Component {
                 origin = tmpTarget;
                 nextTarget = target;
                 start = (long) (System.currentTimeMillis() - 1000*(1 / movementSpeed - timeSince));
-            } else if(pc > 0.75 || (transform.position.x == target.x && transform.position.y == target.y) ) {
+            } else if(pc > 0.5 || (transform.position.x == target.x && transform.position.y == target.y) ) {
                 nextTarget = getTarget().add(delta);
             }
         }
