@@ -14,6 +14,7 @@ public class Registry {
             EntityIdPacket.class,
             EntitySpawnPacket.class,
             EntityAliasPacket.class,
-            ChatPacket.class
+            ChatPacket.class,
+            TerrainEditorPacket.class
     };
 }

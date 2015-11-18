@@ -27,6 +27,7 @@ public class Transform {
 
 	// Public for easy access.
 	public String name;
+	public String tag = "";
 	public Vector position = new Vector(0,0);
 	public Vector scale = new Vector(1,1);
 	public float rotation = 0;
@@ -191,5 +192,14 @@ public class Transform {
 
 	public boolean hasRenderer() {
 		return getRenderer() != null;
+	}
+
+	public static Transform findOne(String name) {
+		for(Transform transform : transforms) {
+			if(transform.name.equalsIgnoreCase(name)) {
+				return transform;
+			}
+		}
+		return null;
 	}
 }

@@ -167,7 +167,7 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 
 	@Override
 	public void keyReleased(KeyEvent keyEvent) {
-		keysPressed.put((int)keyEvent.getKeyChar(), KeyState.RELEASED);
+		keysPressed.put(keyEvent.getKeyCode(), KeyState.RELEASED);
 	}
 
 	@Override
@@ -185,9 +185,6 @@ public class Input extends EditorController implements MouseMotionListener, Mous
 			switch(prev) {
 				case DOWN:
 					keysPressed.put(id, KeyState.HELD);
-					break;
-				case HELD:
-					keysPressed.put(id, KeyState.RELEASED);
 					break;
 				case RELEASED:
 					keysPressed.remove(id);

@@ -54,6 +54,7 @@ public class NPC extends Component {
             Vector diff = Vector.difference(transform.position,target);
             if(mv > diff.magnitude()) {
                 transform.position = target;
+                direction = 0;
             } else {
                 transform.position.add(diff.normalize().multiply(mv));
             }

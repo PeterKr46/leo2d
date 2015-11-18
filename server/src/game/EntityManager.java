@@ -1,6 +1,7 @@
 package game;
 
 
+import game.packet.ChatPacket;
 import net.client.UClient;
 
 import java.util.HashMap;
@@ -49,6 +50,7 @@ public class EntityManager {
         UUID uuid = client == null ? UUID.randomUUID() : client.getUuid();
         float[] position = new float[] {0,0};
         Entity entity = new Entity(uuid, entityId, position, 0);
+        entity.client = client;
         entities.put(entityId, entity);
         entityIds.put(uuid, entityId);
         return entity;
@@ -91,15 +93,19 @@ public class EntityManager {
             this.entityId = entityId;
             this.position = position;
             this.moveDirection = moveDirection;
-            this.moving = false;
         }
 
         private UUID uuid;
         private int entityId;
         private float[] position;
         private int moveDirection;
-        private boolean moving;
         private int weapon;
+
+        private UClient client;
+
+        public UClient getClient() {
+            return client;
+        }
 
         public int getEntityId() {
             return entityId;
@@ -119,12 +125,9 @@ public class EntityManager {
             return uuid;
         }
 
-        public boolean isMoving() {
-            return moving;
-        }
 
-        public void setMoving(boolean moving) {
-            this.moving = moving;
+        public void sendMessage(String message) {
+            getClient().sendPacket(new ChatPacket(message));
         }
 
         public float[] getPosition() {

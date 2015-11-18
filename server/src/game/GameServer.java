@@ -11,8 +11,10 @@ import java.io.IOException;
  * Created by Peter on 25.05.2015.
  */
 public class GameServer extends UServer {
+    private Level level;
     public GameServer(int port, int maxClients) throws IOException {
         super(port, maxClients);
+        level = new Level();
     }
 
     public void broadcastAlias(UClient origin) {
@@ -22,6 +24,14 @@ public class GameServer extends UServer {
                 client.sendPacket(packet);
             }
         }
+    }
+
+    public static GameServer getInstance() {
+        return (GameServer) getServer();
+    }
+
+    public Level getLevel() {
+        return level;
     }
 
     @Override

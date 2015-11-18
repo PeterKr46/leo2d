@@ -1,6 +1,9 @@
 package leo2d.controllers;
 
+import game.packet.TerrainEditorPacket;
+import leo2d.client.ClientOutThread;
 import leo2d.core.Camera;
+import leo2d.core.Debug;
 import leo2d.core.Transform;
 import leo2d.input.Input;
 import leo2d.math.Rect;
@@ -40,6 +43,13 @@ public class PositioningController extends EditorController {
                 }
             }
         } else if(Input.getMouseButtonUp(1)) {
+            if(moving != null && moving.tag.equals("Terrain")) {
+                Debug.log("Moved " + moving.name);
+                String[] raw = moving.name.split("T");
+                int id = Integer.parseInt(raw[0]);
+                int tex = Integer.parseInt(raw[1]);
+                ClientOutThread.outQueue.add(new TerrainEditorPacket(tex, id, (float) moving.position.x, (float) moving.position.y));
+            }
             moving = null;
         }
         if(moving != null) {

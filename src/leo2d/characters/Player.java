@@ -19,6 +19,8 @@ import java.awt.event.KeyEvent;
  */
 public class Player extends Component {
 
+    public static final float gridSize = 0.5f;
+
     private static Player instance;
 
     public static Player getInstance() {
@@ -80,7 +82,7 @@ public class Player extends Component {
             }
         }
         double timeSince = (System.currentTimeMillis() - start) * 0.001;
-        double pc = movementSpeed*timeSince;
+        double pc = movementSpeed*timeSince/gridSize;
         transform.position = new Vector(MathUtil.lerp(pc, origin.x, target.x), MathUtil.lerp(pc, origin.y, target.y));
 
         if(!Vector.isEqual(target, lastSent)) {
@@ -92,13 +94,13 @@ public class Player extends Component {
         Vector delta = Vector.zero();
         if(!ChatController.chatActive) {
             if (Input.getKey(KeyEvent.VK_W)) {
-                delta = new Vector(0, 1);
+                delta = new Vector(0, gridSize);
             } else if (Input.getKey(KeyEvent.VK_S)) {
-                delta = new Vector(0, -1);
+                delta = new Vector(0, -gridSize);
             } else if (Input.getKey(KeyEvent.VK_D)) {
-                delta = new Vector(1, 0);
+                delta = new Vector(gridSize, 0);
             } else if (Input.getKey(KeyEvent.VK_A)) {
-                delta = new Vector(-1, 0);
+                delta = new Vector(-gridSize, 0);
             }
         }
         if(delta.x != 0 || delta.y != 0) {
@@ -107,7 +109,7 @@ public class Player extends Component {
                 target = origin;
                 origin = tmpTarget;
                 nextTarget = target;
-                start = (long) (System.currentTimeMillis() - 1000*(1 / movementSpeed - timeSince));
+                start = (long) (System.currentTimeMillis() - 1000*(gridSize / movementSpeed - timeSince));
             } else if(pc > 0.5 || (transform.position.x == target.x && transform.position.y == target.y) ) {
                 nextTarget = getTarget().add(delta);
             }
@@ -115,7 +117,7 @@ public class Player extends Component {
         transform.getRenderer().setIndexInLayer((int) (transform.position.y * 100));
         Vector dir = getDirection();
         dir.normalize();
-        transform.scale = new Vector(dir.x != 0 ? dir.x : 1, 1);
+        transform.scale = new Vector(dir.x != 0 ? (dir.x < 0 ? -1 : 1) : 1, 1);
         if(animator != null) {
             if(dir.y == 0) {
                 animator.animation = dir.x != 0 ? horizontal : idle;
