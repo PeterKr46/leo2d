@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/artifacts/build</output-path>
     <root id="root">
       <element id="directory" name="assets">
-        <element id="dir-copy" path="$PROJECT_DIR$/assets" />
+        <element id="dir-copy" path="$PROJECT_DIR$/Doodle/DoodleGame/assets" />
       </element>
       <element id="directory" name="lib">
         <element id="dir-copy" path="$PROJECT_DIR$/lib" />
