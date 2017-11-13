@@ -3,12 +3,11 @@ package eu.saltyscout.leo2d;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import eu.saltyscout.leo2d.gl.VoltImg;
-import eu.saltyscout.leo2d.math.Rect;
-import eu.saltyscout.leo2d.math.Segment;
 import eu.saltyscout.leo2d.render.RenderPhase;
 import eu.saltyscout.leo2d.render.Renderer;
 import eu.saltyscout.leo2d.util.data.PriorityQueue;
-import eu.saltyscout.math.Vector;
+import org.dyn4j.geometry.AABB;
+import org.dyn4j.geometry.Vector2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class Camera {
     public double[] backgroundColor = new double[]{0.15, 0.15, 0.15};
     public double[] debugBackgroundColor = new double[]{0.15, 0.15, 0.15};
     private float verticalSize = 3;
-    private Vector position = Vector.of(0, 0);
+    private Vector2 position = new Vector2(0, 0);
     // A list if layers which this camera renders. If empty, all.
     private List<Integer> layerMask = new ArrayList<>();
 
@@ -34,16 +33,16 @@ public class Camera {
         return volty;
     }
 
-    public Vector getPosition() {
-        return position.clone();
+    public Vector2 getPosition() {
+        return position.copy();
     }
 
-    public void setPosition(Vector position) {
-        this.position = position.clone();
+    public void setPosition(Vector2 position) {
+        this.position = position.copy();
     }
 
-    public Vector getHalfSize() {
-        return Vector.of(verticalSize * Leo2D.getAspectRatio(), verticalSize);
+    public Vector2 getHalfSize() {
+        return new Vector2(verticalSize * Leo2D.getAspectRatio(), verticalSize);
     }
 
     public float getVerticalSize() {
@@ -58,11 +57,11 @@ public class Camera {
         return verticalSize * Leo2D.getAspectRatio();
     }
 
-    public Vector getMin() {
-        return getPosition().add(getHalfSize().mulComponents(-1, -1));
+    public Vector2 getMin() {
+        return getPosition().add(getHalfSize().multiply(-1));
     }
 
-    public Vector getMax() {
+    public Vector2 getMax() {
         return getPosition().add(getHalfSize());
     }
 
@@ -80,26 +79,26 @@ public class Camera {
         }
     }
 
-    public Vector localize(Vector worldPos) {
+    public Vector2 localize(Vector2 worldPos) {
         if (worldPos == null) {
             return null;
         }
-        Vector diff = Vector.difference(position.clone(), worldPos);
-        diff.setX(diff.getX() / (verticalSize * Leo2D.getAspectRatio()));
-        diff.setY(diff.getY() / verticalSize);
+        Vector2 diff = (worldPos.difference(position));
+        diff.x /= (verticalSize * Leo2D.getAspectRatio());
+        diff.y /= verticalSize;
         return diff;
     }
 
-    public Vector localizePixelPos(Vector pixelPos) {
+    public Vector2 localizePixelPos(Vector2 pixelPos) {
         if (pixelPos == null) {
             return null;
         }
-        return Vector.of((pixelPos.getX() / Leo2D.getScreenWidth()), (pixelPos.getY() / Leo2D.getScreenHeight())).mul(2).sub(1, 1);
+        return new Vector2((pixelPos.x / Leo2D.getScreenWidth()), (pixelPos.y / Leo2D.getScreenHeight())).multiply(2).subtract(1, 1);
     }
 
-    public Vector toWorldPos(Vector localPos) {
-        Vector v = getPosition();
-        v.add(localPos.getX() * getHorizontalSize(), localPos.getY() * getVerticalSize());
+    public Vector2 toWorldPos(Vector2 localPos) {
+        Vector2 v = getPosition();
+        v.add(localPos.x * getHorizontalSize(), localPos.y * getVerticalSize());
         return v;
     }
 
@@ -107,9 +106,9 @@ public class Camera {
         // Create Render order
         PriorityQueue<Renderer> renderOrder = new PriorityQueue<>();
         List<Renderer> renderers = Scene.findAll(Renderer.class);
-        Rect cullBounds = getAABB();
+        AABB cullBounds = getAABB();
         for (Renderer renderer : renderers) {
-            if (renderer.isEnabled() && renderer.getPhase() == renderPhase && isLayerEnabled(renderer.getLayer()) && (renderPhase == RenderPhase.GUI || cullBounds.intersects(renderer.getAABB()))) {
+            if (renderer.isEnabled() && renderer.getPhase() == renderPhase && isLayerEnabled(renderer.getLayer()) && (renderPhase == RenderPhase.GUI || cullBounds.overlaps(renderer.getAABB()))) {
                 for (int passIndex : renderer.getPassIndices()) {
                     renderOrder.enqueue(renderer, passIndex);
                 }
@@ -154,40 +153,30 @@ public class Camera {
         if (!Leo2D.isDebugEnabled()) {
             return;
         }
-        Vector min = getMin();
-        Vector max = getMax();
+        Vector2 min = getMin();
+        Vector2 max = getMax();
         float color = 0.6f;
-        for (int i = Math.round(min.getY()); i < max.getY(); i++) {
+        for (int i = Math.toIntExact(Math.round(min.y)); i < max.y; i++) {
             float alpha = 0.2f;
             if (i % 10 == 0) {
                 alpha = 0.6f;
             }
-            volty.line(Vector.of(min.getX(), i), Vector.of(max.getX(), i), new float[]{color, color, color, alpha});
+            volty.line(new Vector2(min.x, i), new Vector2(max.x, i), new double[]{color, color, color, alpha});
         }
-        for (int i = Math.round(min.getX()); i < max.getX(); i++) {
+        for (int i = Math.toIntExact(Math.round(min.x)); i < max.x; i++) {
             float alpha = 0.2f;
             if (i % 10 == 0) {
                 alpha = 0.6f;
             }
-            volty.line(Vector.of(i, min.getY()), Vector.of(i, max.getY()), new float[]{color, color, color, alpha});
+            volty.line(new Vector2(i, min.y), new Vector2(i, max.y), new double[]{color, color, color, alpha});
         }
 
     }
 
-    public Rect getAABB() {
-        Vector min = getMin();
-        Vector max = getMax();
-        return new Rect(min, max);
+    public AABB getAABB() {
+        Vector2 min = getMin();
+        Vector2 max = getMax();
+        return new AABB(min, max);
     }
 
-    public Segment[] getBoundingSegments() {
-        Vector min = getMin();
-        Vector max = getMax();
-        return new Segment[]{
-                new Segment(max, Vector.up().mul(-1), getVerticalSize() * 2),
-                new Segment(Vector.of(min.getX(), max.getY()), Vector.right(),getHorizontalSize() * 2),
-                new Segment(min, Vector.up(), getVerticalSize() * 2),
-                new Segment(Vector.of(max.getX(), min.getY()), Vector.right().mul(-1),getHorizontalSize() * 2),
-        };
-    }
 }

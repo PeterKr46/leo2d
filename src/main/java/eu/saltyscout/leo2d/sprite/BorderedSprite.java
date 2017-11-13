@@ -1,6 +1,6 @@
 package eu.saltyscout.leo2d.sprite;
 
-import eu.saltyscout.leo2d.math.Rect;
+import org.dyn4j.geometry.AABB;
 
 /**
  * Created by Peter on 06.11.2017.
@@ -11,7 +11,7 @@ public class BorderedSprite extends Sprite {
         super(texture);
     }
 
-    public BorderedSprite(Texture texture, Rect rect) {
+    public BorderedSprite(Texture texture, AABB rect) {
         super(texture, rect);
     }
 

@@ -1,12 +1,12 @@
 package eu.saltyscout.leo2d.component;
 
-import eu.saltyscout.leo2d.Transform;
+import eu.saltyscout.leo2d.GameObject;
 
 /**
  * Created by Peter on 10.11.2015.
  */
 public abstract class ThreadedComponent implements Component {
-    private final Transform transform;
+    private final GameObject gameObject;
     private boolean stop = false;
     private Thread sideThread = new Thread(new Runnable() {
         @Override
@@ -24,8 +24,8 @@ public abstract class ThreadedComponent implements Component {
         }
     });
 
-    public ThreadedComponent(Transform transform) {
-        this.transform = transform;
+    public ThreadedComponent(GameObject gameObject) {
+        this.gameObject = gameObject;
         sideThread.start();
     }
 
@@ -36,7 +36,7 @@ public abstract class ThreadedComponent implements Component {
     @Override
     public final void update() {
         if (stop) {
-            transform.removeComponent(this);
+            gameObject.removeComponent(this);
         }
         // Nothing, this Component does not touch the main thread.
     }

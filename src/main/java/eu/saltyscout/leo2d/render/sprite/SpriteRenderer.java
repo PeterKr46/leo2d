@@ -2,27 +2,27 @@ package eu.saltyscout.leo2d.render.sprite;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import eu.saltyscout.leo2d.GameObject;
 import eu.saltyscout.leo2d.Leo2D;
 import eu.saltyscout.leo2d.Scene;
-import eu.saltyscout.leo2d.Transform;
 import eu.saltyscout.leo2d.gl.VoltImg;
-import eu.saltyscout.leo2d.math.Rect;
 import eu.saltyscout.leo2d.render.RenderPhase;
 import eu.saltyscout.leo2d.render.Renderer;
 import eu.saltyscout.leo2d.sprite.Sprite;
 import eu.saltyscout.leo2d.sprite.Texture;
-import eu.saltyscout.math.Vector;
+import org.dyn4j.geometry.AABB;
+import org.dyn4j.geometry.Vector2;
 
 public class SpriteRenderer implements Renderer {
-    private final Transform transform;
+    private final GameObject gameObject;
     private boolean enabled = true;
 
     private int layer = 0;
     private int[] passIndex = new int[]{0};
     private Sprite sprite = null;
 
-    public SpriteRenderer(Transform transform) {
-        this.transform = transform;
+    public SpriteRenderer(GameObject gameObject) {
+        this.gameObject = gameObject;
     }
 
 
@@ -45,8 +45,13 @@ public class SpriteRenderer implements Renderer {
     }
 
     @Override
-    public Transform getTransform() {
-        return transform;
+    public GameObject getGameObject() {
+        return gameObject;
+    }
+
+    @Override
+    public void onDestroy() {
+
     }
 
     public int getLayer() {
@@ -71,26 +76,26 @@ public class SpriteRenderer implements Renderer {
     }
 
     @Override
-    public Rect getAABB() {
+    public AABB getAABB() {
         if (sprite == null || sprite.getTexture() == null) {
-            return new Rect(transform.getPosition(), transform.getPosition());
+            return new AABB(gameObject.getTransform().getTranslation(), gameObject.getTransform().getTranslation());
         }
 
-        Vector scale = transform.getLocalScale();
-        float rotation = transform.getRotation();
+        Vector2 scale = gameObject.getLocalScale();
+        double rotation = gameObject.getTransform().getRotation();
 
-        Vector right = Vector.of(scale.getX(), 0).rotate(rotation).mul(sprite.getWidth() / sprite.getPPU());
-        Vector up = Vector.of(0, scale.getY()).rotate(rotation).mul(sprite.getHeight() / sprite.getPPU());
-
-        Vector bl = Vector.copyOnWrite(transform.getPosition().add(sprite.getOffset().mulComponents(scale).rotate(rotation)));
-        Vector br = bl.add(right);
-        Vector tr = bl.add(right).add(up);
-        Vector tl = bl.add(up);
-        float xMin = Math.min(bl.getX(), Math.min(br.getX(), Math.min(tr.getX(), tl.getX())));
-        float yMin = Math.min(bl.getY(), Math.min(br.getY(), Math.min(tr.getY(), tl.getY())));
-        float xMax = Math.max(bl.getX(), Math.max(br.getX(), Math.max(tr.getX(), tl.getX())));
-        float yMax = Math.max(bl.getY(), Math.max(br.getY(), Math.max(tr.getY(), tl.getY())));
-        return new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
+        Vector2 right = new Vector2(scale.x, 0).rotate(rotation).multiply(sprite.getWidth() / sprite.getPPU());
+        Vector2 up = new Vector2(0, scale.y).rotate(rotation).multiply(sprite.getHeight() / sprite.getPPU());
+    // TODO
+        Vector2 bl = new Vector2(gameObject.getTransform().getTranslation().add(sprite.getOffset().multiply(scale.x).rotate(rotation)));
+        Vector2 br = bl.copy().add(right);
+        Vector2 tr = bl.copy().add(right).add(up);
+        Vector2 tl = bl.copy().add(up);
+        double xMin = Math.min(bl.x, Math.min(br.x, Math.min(tr.x, tl.x)));
+        double yMin = Math.min(bl.y, Math.min(br.y, Math.min(tr.y, tl.y)));
+        double xMax = Math.max(bl.x, Math.max(br.x, Math.max(tr.x, tl.x)));
+        double yMax = Math.max(bl.y, Math.max(br.y, Math.max(tr.y, tl.y)));
+        return new AABB(xMin, yMin, xMax, yMax);
     }
 
     @Override
@@ -105,22 +110,22 @@ public class SpriteRenderer implements Renderer {
         tex.loadGLTexture(Leo2D.getGL());
         tex.getTexture(volty.gl()).bind(volty.gl());
 
-        Rect sRect = sprite.getRect();
-        float min_x = Math.min(1f, sRect.getMinX() / tex.getWidth()),
+        AABB sRect = sprite.getRect();
+        double min_x = Math.min(1f, sRect.getMinX() / tex.getWidth()),
                 min_y = Math.min(1f, sRect.getMinY() / tex.getHeight()),
                 max_x = Math.min(1f, sRect.getMaxX() / tex.getWidth()),
                 max_y = Math.min(1f, sRect.getMaxY() / tex.getHeight());
 
-        Vector scale = transform.getLocalScale();
-        float rotation = transform.getRotation();
+        Vector2 scale = gameObject.getLocalScale();
+        double rotation = gameObject.getTransform().getRotation();
 
-        Vector right = Vector.of(scale.getX(), 0).rotate(rotation).mul(sprite.getWidth() / sprite.getPPU());
-        Vector up = Vector.of(0, scale.getY()).rotate(rotation).mul(sprite.getHeight() / sprite.getPPU());
-
-        Vector bl = Vector.copyOnWrite(transform.getPosition().add(sprite.getOffset().mulComponents(scale).rotate(rotation)));
-        Vector br = bl.add(right);
-        Vector tr = bl.add(right).add(up);
-        Vector tl = bl.add(up);
+        Vector2 right = new Vector2(scale.x, 0).rotate(rotation).multiply(sprite.getWidth() / sprite.getPPU());
+        Vector2 up = new Vector2(0, scale.y).rotate(rotation).multiply(sprite.getHeight() / sprite.getPPU());
+        // TODO
+        Vector2 bl = new Vector2(gameObject.getTransform().getTranslation().add(sprite.getOffset().multiply(scale.x).rotate(rotation)));
+        Vector2 br = bl.copy().add(right);
+        Vector2 tr = bl.copy().add(right).add(up);
+        Vector2 tl = bl.copy().add(up);
 
         volty.enable(GL.GL_BLEND);
         volty.blendFunc(GL2.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -141,7 +146,7 @@ public class SpriteRenderer implements Renderer {
         volty.end();
         volty.disable(3553);
         if (Leo2D.isDebugEnabled()) {
-            float[] color = new float[]{0.5f, 0.5f, 0.5f, 0.4f};
+            double[] color = new double[]{0.5f, 0.5f, 0.5f, 0.4f};
             volty.line(tl, tr, color);
             volty.line(tl, bl, color);
             volty.line(bl, br, color);

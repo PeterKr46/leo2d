@@ -1,26 +1,29 @@
 package eu.saltyscout.leo2d;
 
 import eu.saltyscout.leo2d.component.Component;
+import org.dyn4j.dynamics.World;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
- * The Scene Singleton is a manager class for Transform and such.
+ * The Scene Singleton is a manager class for GameObject and such.
  */
 public class Scene {
     private static Scene _instance;
-    private final List<Transform> transforms = new ArrayList<>();
+    private final CopyOnWriteArrayList<GameObject> gameObjects = new CopyOnWriteArrayList<>();
     /**
-     * This is an UnmodifiableCollection for public exposure of the transforms.
+     * This is an UnmodifiableCollection for public exposure of the gameObjects.
      */
-    private final List<Transform> unmodifiableTransforms = Collections.unmodifiableList(transforms);
+    private final List<GameObject> unmodifiableGameObjects = Collections.unmodifiableList(gameObjects);
     private Camera mainCamera = null;
+    private World dyn4j;
 
     private Scene() {
-
+        dyn4j = new World();
     }
 
     private static Scene getInstance() {
@@ -48,15 +51,15 @@ public class Scene {
         getInstance()._setMainCamera(camera);
     }
 
-    public static List<Transform> getTransforms() {
+    public static List<GameObject> getTransforms() {
         return getInstance()._getTransforms();
     }
 
-    public static Transform createTransform(String name) {
+    public static GameObject createTransform(String name) {
         return getInstance()._createTransform(name);
     }
 
-    public static Transform findOne(String name) {
+    public static GameObject findOne(String name) {
         return getInstance()._findOne(name);
     }
 
@@ -64,7 +67,7 @@ public class Scene {
         return getInstance()._findOne(componentType);
     }
 
-    public static List<Transform> findAll(String name) {
+    public static List<GameObject> findAll(String name) {
         return getInstance()._findAll(name);
     }
 
@@ -76,8 +79,8 @@ public class Scene {
         getInstance()._clear();
     }
 
-    public static void destroyTransform(Transform transform) {
-        getInstance()._destroyTransform(transform);
+    public static void destroyTransform(GameObject gameObject) {
+        getInstance()._destroyTransform(gameObject);
     }
 
     protected Camera _getMainCamera() {
@@ -88,26 +91,26 @@ public class Scene {
         mainCamera = camera;
     }
 
-    protected List<Transform> _getTransforms() {
-        return unmodifiableTransforms;
+    protected List<GameObject> _getTransforms() {
+        return unmodifiableGameObjects;
     }
 
     /**
-     * Creates and registers a new Transform instance.
+     * Creates and registers a new GameObject instance.
      *
-     * @param name the name for the new Transform.
-     * @return the new Transform instance.
+     * @param name the name for the new GameObject.
+     * @return the new GameObject instance.
      */
-    protected Transform _createTransform(String name) {
-        Transform t = new Transform(name);
-        transforms.add(t);
+    protected GameObject _createTransform(String name) {
+        GameObject t = new GameObject(name);
+        gameObjects.add(t);
         return t;
     }
 
-    protected Transform _findOne(String name) {
-        for (Transform transform : transforms) {
-            if (transform.name.equalsIgnoreCase(name)) {
-                return transform;
+    protected GameObject _findOne(String name) {
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject.name.equalsIgnoreCase(name)) {
+                return gameObject;
             }
         }
         return null;
@@ -117,7 +120,7 @@ public class Scene {
         return (T) _getTransforms().stream().flatMap(t -> t.getComponents().stream()).filter(component -> component.getClass() == componentType).findFirst().get();
     }
 
-    private List<Transform> _findAll(String name) {
+    private List<GameObject> _findAll(String name) {
         return _getTransforms().stream().filter(transform -> transform.name.equals(name)).collect(Collectors.toList());
     }
 
@@ -138,17 +141,25 @@ public class Scene {
     }
 
     protected void _clear() {
-        //transforms.forEach(transform -> transform.des);
-        //TODO
-        transforms.clear();
+        gameObjects.forEach(this::_destroyTransform);
+        dyn4j.removeAllBodies();
     }
 
-    protected void _destroyTransform(Transform transform) {
-        transforms.remove(transform);
-        for (Transform t : transforms) {
-            if (t.parent == transform) {
+    protected void _destroyTransform(GameObject gameObject) {
+        gameObject.onDestroy();
+        for (GameObject t : gameObjects) {
+            if (t.parent == gameObject) {
                 destroyTransform(t);
             }
         }
+        gameObjects.remove(gameObject);
+    }
+
+    protected World _getDyn4J() {
+        return dyn4j;
+    }
+
+    public static World getDyn4J() {
+        return getInstance()._getDyn4J();
     }
 }

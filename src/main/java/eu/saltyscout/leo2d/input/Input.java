@@ -3,7 +3,7 @@ package eu.saltyscout.leo2d.input;
 import eu.saltyscout.leo2d.Camera;
 import eu.saltyscout.leo2d.Leo2D;
 import eu.saltyscout.leo2d.Scene;
-import eu.saltyscout.math.Vector;
+import org.dyn4j.geometry.Vector2;
 
 import javax.swing.event.MouseInputListener;
 import java.awt.event.*;
@@ -11,19 +11,19 @@ import java.util.HashMap;
 
 public class Input implements MouseMotionListener, MouseInputListener, MouseWheelListener, KeyListener {
 
-    private static Vector lastMousePosition = Vector.of(0, 0);
-    private static Vector mousePosition = Vector.of(0, 0);
+    private static Vector2 lastMousePosition = new Vector2(0, 0);
+    private static Vector2 mousePosition = new Vector2(0, 0);
     private static HashMap<Integer, KeyState> keysPressed = new HashMap<>();
     public Input() {
         super();
     }
 
-    public static Vector getMousePosition() {
-        return mousePosition.clone();
+    public static Vector2 getMousePosition() {
+        return mousePosition.copy();
     }
 
-    public static Vector getMouseDelta() {
-        return Vector.difference(lastMousePosition, mousePosition).clone();
+    public static Vector2 getMouseDelta() {
+        return mousePosition.difference(lastMousePosition).copy();
     }
 
     public static boolean getMouseButton(int button) {
@@ -106,40 +106,40 @@ public class Input implements MouseMotionListener, MouseInputListener, MouseWhee
 
     @Override
     public void mouseDragged(MouseEvent mouseEvent) {
-        mousePosition = Vector.of(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
+        mousePosition = new Vector2(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
     }
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
-        mousePosition = Vector.of(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
+        mousePosition = new Vector2(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
     }
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
-        mousePosition = Vector.of(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
+        mousePosition = new Vector2(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
         keysPressed.put(-mouseEvent.getButton(), KeyState.CLICK);
     }
 
     @Override
     public void mousePressed(MouseEvent mouseEvent) {
-        mousePosition = Vector.of(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
+        mousePosition = new Vector2(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
         keysPressed.put(-mouseEvent.getButton(), KeyState.DOWN);
     }
 
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
-        mousePosition = Vector.of(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
+        mousePosition = new Vector2(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
         keysPressed.put(-mouseEvent.getButton(), KeyState.RELEASED);
     }
 
     @Override
     public void mouseEntered(MouseEvent mouseEvent) {
-        mousePosition = Vector.of(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
+        mousePosition = new Vector2(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
     }
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
-        mousePosition = Vector.of(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
+        mousePosition = new Vector2(mouseEvent.getX(), Leo2D.getScreenHeight() - mouseEvent.getY());
     }
 
     @Override
@@ -187,7 +187,7 @@ public class Input implements MouseMotionListener, MouseInputListener, MouseWhee
                     break;
             }
         }
-        lastMousePosition = mousePosition.clone();
+        lastMousePosition = mousePosition.copy();
     }
 
     public static enum KeyState {

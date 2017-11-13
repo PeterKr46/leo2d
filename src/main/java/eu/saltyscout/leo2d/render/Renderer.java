@@ -1,7 +1,7 @@
 package eu.saltyscout.leo2d.render;
 
 import eu.saltyscout.leo2d.component.Component;
-import eu.saltyscout.leo2d.math.Rect;
+import org.dyn4j.geometry.AABB;
 
 /**
  * Created by Peter on 26.10.2017.
@@ -18,12 +18,12 @@ public interface Renderer extends Component {
 
     /**
      * Gets the world-space area this renderer intends to draw to. <br/>
-     * If there is no intersection between the given Rect and the Camera bounds, the Renderer is culled.<br/>
+     * If there is no intersection between the given AABB and the Camera bounds, the Renderer is culled.<br/>
      * This is ignored if the RenderPhase is {@link RenderPhase#GUI}, which will always paint.
      *
-     * @return a Rect representing world-space boundaries.
+     * @return a AABB representing world-space boundaries.
      */
-    Rect getAABB();
+    AABB getAABB();
 
     /**
      * This method is called by the Camera.

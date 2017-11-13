@@ -5,14 +5,14 @@ import eu.saltyscout.leo2d.util.MathUtil;
 /**
  * Created by Peter on 01.11.2017.
  */
-public class FloatCurve extends Curve<Float> {
+public class FloatCurve extends Curve<Double> {
 
-    public FloatCurve(float start) {
+    public FloatCurve(double start) {
         super(start);
     }
 
     @Override
-    Float lerp(float pc, Float a, Float b) {
+    Double lerp(float pc, Double a, Double b) {
         return MathUtil.lerp(pc, a, b);
     }
 }

@@ -6,11 +6,11 @@ import eu.saltyscout.leo2d.Camera;
 import eu.saltyscout.leo2d.Scene;
 import eu.saltyscout.leo2d.core.Debug;
 import eu.saltyscout.leo2d.gl.VoltImg;
-import eu.saltyscout.leo2d.math.Rect;
 import eu.saltyscout.leo2d.sprite.Sprite;
 import eu.saltyscout.leo2d.sprite.SpriteSheet;
 import eu.saltyscout.leo2d.sprite.Texture;
-import eu.saltyscout.math.Vector;
+import org.dyn4j.geometry.AABB;
+import org.dyn4j.geometry.Vector2;
 
 import java.io.File;
 import java.util.HashMap;
@@ -58,11 +58,11 @@ public class Font extends SpriteSheet {
         characterSpriteMap.put(c, sprite);
     }
 
-    public void write(Vector position, String text, float size, float rotation) {
+    public void write(Vector2 position, String text, float size, float rotation) {
         write(position, text, size, rotation, new float[]{0, 0, 0});
     }
 
-    public void write(Vector position, String text, float size, float rotation, float[] rgb) {
+    public void write(Vector2 position, String text, float size, float rotation, float[] rgb) {
         Camera camera = Scene.getMainCamera();
         if (camera == null) return;
         VoltImg volty = camera.getVolty();
@@ -71,26 +71,26 @@ public class Font extends SpriteSheet {
             char chr = text.charAt(i);
             Sprite sprite = characterSpriteMap.get(chr);
             if (sprite != null) {
-                Vector scaledOffset = Vector.of(i * size * 0.5, 0).rotate(rotation);
+                Vector2 scaledOffset = new Vector2(i * size * 0.5, 0).rotate(rotation);
                 Texture tex = sprite.getTexture();
 
                 volty.enable(3553);
                 tex.loadGLTexture(volty.gl());
                 tex.getTexture(volty.gl()).bind(volty.gl());
 
-                Rect sRect = sprite.getRect();
-                float min_x = Math.min(1f, sRect.getMinX() / tex.getWidth()),
+                AABB sRect = sprite.getRect();
+                double min_x = Math.min(1f, sRect.getMinX() / tex.getWidth()),
                         min_y = Math.min(1f, sRect.getMinY() / tex.getHeight()),
                         max_x = Math.min(1f, sRect.getMaxX() / tex.getWidth()),
                         max_y = Math.min(1f, sRect.getMaxY() / tex.getHeight());
 
-                Vector right = Vector.of(size, 0).rotate(rotation).mul(sprite.getWidth() / sprite.getPPU());
-                Vector up = Vector.of(0, size).rotate(rotation).mul(sprite.getHeight() / sprite.getPPU());
+                Vector2 right = new Vector2(size, 0).rotate(rotation).multiply(sprite.getWidth() / sprite.getPPU());
+                Vector2 up = new Vector2(0, size).rotate(rotation).multiply(sprite.getHeight() / sprite.getPPU());
 
-                Vector bl = Vector.copyOnWrite(position.clone().add(scaledOffset).clone().add(sprite.getOffset().rotate(rotation)));
-                Vector br = bl.add(right);
-                Vector tr = bl.add(right).add(up);
-                Vector tl = bl.add(up);
+                Vector2 bl = position.copy().add(scaledOffset).add(sprite.getOffset().rotate(rotation));
+                Vector2 br = bl.copy().add(right);
+                Vector2 tr = bl.copy().add(right).add(up);
+                Vector2 tl = bl.copy().add(up);
 
                 volty.enable(GL.GL_BLEND);
                 volty.blendFunc(GL2.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);

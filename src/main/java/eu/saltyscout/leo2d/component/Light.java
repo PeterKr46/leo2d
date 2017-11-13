@@ -1,7 +1,7 @@
-package eu.saltyscout.leo2d.component;
+/*package eu.saltyscout.leo2d.component;
 
+import eu.saltyscout.leo2d.GameObject;
 import eu.saltyscout.leo2d.Scene;
-import eu.saltyscout.leo2d.Transform;
 import eu.saltyscout.leo2d.gl.VoltImg;
 import eu.saltyscout.leo2d.math.Ray;
 import eu.saltyscout.leo2d.math.Segment;
@@ -14,11 +14,11 @@ import eu.saltyscout.math.Vector;
 
 public class Light implements Component {
 
-    private final Transform transform;
+    private final GameObject gameObject;
     private boolean enabled = true;
 
-    public Light(Transform transform) {
-        this.transform = transform;
+    public Light(GameObject gameObject) {
+        this.gameObject = gameObject;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class Light implements Component {
     public void update() {
         PriorityQueue<Vector> verts = new PriorityQueue<>();
         for (Segment edge : Scene.getMainCamera().getBoundingSegments()) {
-            Ray ray = new Ray(transform.getPosition(), edge.getOrigin().clone().sub(transform.getPosition()));
+            Ray ray = new Ray(gameObject.getPosition(), edge.getOrigin().clone().sub(gameObject.getPosition()));
             Physics.RaycastHit hit = Physics.cast(ray);
             if (hit.point != null) {
                 verts.enqueue(hit.point, ray.getDirection().getAngle() * 100.0);
@@ -49,14 +49,14 @@ public class Light implements Component {
         }
         for (Collider collider : Scene.findAll(Collider.class)) {
             // TODO
-            if (collider.getBounds().intersects(Scene.getMainCamera().getAABB())) {
+            if (collider.getAABB().intersects(Scene.getMainCamera().getAABB())) {
                 if (collider instanceof EdgeCollider) {
                     EdgeCollider coll = (EdgeCollider) collider;
                     for (Ray ray : coll.getWorldEdges()) {
-                        Vector vertex = ray.getOrigin();
-                        Ray r = new Ray(transform.getPosition(), vertex.clone().sub(transform.getPosition()));
-                        Ray r2 = new Ray(transform.getPosition(), r.getDirection().rotate(0.2f));
-                        Ray r3 = new Ray(transform.getPosition(), r.getDirection().rotate(-0.2f));
+                        Vector2 vertex = ray.getOrigin();
+                        Ray r = new Ray(gameObject.getPosition(), vertex.clone().sub(gameObject.getPosition()));
+                        Ray r2 = new Ray(gameObject.getPosition(), r.getDirection().rotate(0.2f));
+                        Ray r3 = new Ray(gameObject.getPosition(), r.getDirection().rotate(-0.2f));
                         Physics.RaycastHit hit = Physics.cast(r);
                         Physics.RaycastHit hit2 = Physics.cast(r2);
                         Physics.RaycastHit hit3 = Physics.cast(r3);
@@ -75,15 +75,15 @@ public class Light implements Component {
                     }
                 } else if (collider instanceof CircleCollider) {
                     CircleCollider coll = (CircleCollider) collider;
-                    Vector center = coll.getCenter();
-                    Vector dir = center.clone().sub(transform.getPosition()).normalize();
-                    Vector orth = dir.getOrth();
-                    Vector a = center.clone().add(orth.mul(coll.getRadius()));
-                    Vector b = center.clone().add(orth.mul(-1));
-                    for (Vector vertex : new Vector[]{a, b}) {
-                        Ray r = new Ray(transform.getPosition(), vertex.clone().sub(transform.getPosition()));
-                        Ray r2 = new Ray(transform.getPosition(), r.getDirection().rotate(0.2f));
-                        Ray r3 = new Ray(transform.getPosition(), r.getDirection().rotate(-0.2f));
+                    Vector2 center = coll.getCenter();
+                    Vector2 dir = center.clone().sub(gameObject.getPosition()).normalize();
+                    Vector2 orth = dir.getOrth();
+                    Vector2 a = center.clone().add(orth.multiply(coll.getRadius()));
+                    Vector2 b = center.clone().add(orth.multiply(-1));
+                    for (Vector2 vertex : new Vector[]{a, b}) {
+                        Ray r = new Ray(gameObject.getPosition(), vertex.clone().sub(gameObject.getPosition()));
+                        Ray r2 = new Ray(gameObject.getPosition(), r.getDirection().rotate(0.2f));
+                        Ray r3 = new Ray(gameObject.getPosition(), r.getDirection().rotate(-0.2f));
                         Physics.RaycastHit hit = Physics.cast(r);
                         Physics.RaycastHit hit2 = Physics.cast(r2);
                         Physics.RaycastHit hit3 = Physics.cast(r3);
@@ -111,14 +111,14 @@ public class Light implements Component {
         data[raw.length] = (Vector) raw[0];
         VoltImg volty = Scene.getMainCamera().getVolty();
         volty.gl().glColor4f(1, 1, 1, 0.1f);
-        volty.triangleFan(transform.getPosition(), data);
-        volty.filledCircle(transform.getPosition(), Scene.getMainCamera().getVerticalSize() / 50, 1, new float[]{1, 0, 0});
+        volty.triangleFan(gameObject.getPosition(), data);
+        volty.filledCircle(gameObject.getPosition(), Scene.getMainCamera().getVerticalSize() / 50, 1, new float[]{1, 0, 0});
         volty.gl().glColor3f(1, 1, 1);
     }
 
     @Override
-    public Transform getTransform() {
-        return transform;
+    public GameObject getGameObject() {
+        return gameObject;
     }
 
-}
+}*/

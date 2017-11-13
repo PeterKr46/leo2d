@@ -1,32 +1,32 @@
 package eu.saltyscout.leo2d.sprite;
 
-import eu.saltyscout.leo2d.math.Rect;
-import eu.saltyscout.math.Vector;
+import org.dyn4j.geometry.AABB;
+import org.dyn4j.geometry.Vector2;
 
 public class Sprite {
     private final Texture texture;
-    private Vector offset = Vector.of(0, 0);
-    private Rect rect;
+    private Vector2 offset = new Vector2(0,0);
+    private AABB rect;
     private float ppu;
 
     public Sprite(Texture texture) {
         this.texture = texture;
-        this.rect = new Rect(0, 0, texture.getWidth(), texture.getHeight());
+        this.rect = new AABB(0, 0, texture.getWidth(), texture.getHeight());
         this.ppu = texture.getHeight();
     }
 
-    public Sprite(Texture texture, Rect rect) {
+    public Sprite(Texture texture, AABB rect) {
         this.texture = texture;
-        this.rect = rect.clone();
+        this.rect = new AABB(rect);
         this.ppu = texture.getHeight();
     }
 
-    public Vector getOffset() {
-        return offset.clone();
+    public Vector2 getOffset() {
+        return offset.copy();
     }
 
-    public void setOffset(Vector offset) {
-        this.offset = offset.clone();
+    public void setOffset(Vector2 offset) {
+        this.offset = offset.copy();
     }
 
     public Texture getTexture() {
@@ -41,19 +41,19 @@ public class Sprite {
         this.ppu = (ppu <= 0 ? this.ppu : ppu);
     }
 
-    public Rect getRect() {
-        return rect.clone();
+    public AABB getRect() {
+        return new AABB(rect);
     }
 
-    public void setRect(Rect rect) {
-        this.rect = rect.clone();
+    public void setRect(AABB rect) {
+        this.rect = new AABB(rect);
     }
 
-    public float getHeight() {
+    public double getHeight() {
         return rect.getHeight();
     }
 
-    public float getWidth() {
+    public double getWidth() {
         return rect.getWidth();
     }
 }

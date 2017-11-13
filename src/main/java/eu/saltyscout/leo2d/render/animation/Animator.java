@@ -1,7 +1,7 @@
 package eu.saltyscout.leo2d.render.animation;
 
+import eu.saltyscout.leo2d.GameObject;
 import eu.saltyscout.leo2d.Leo2D;
-import eu.saltyscout.leo2d.Transform;
 import eu.saltyscout.leo2d.component.Component;
 import eu.saltyscout.leo2d.render.sprite.SpriteRenderer;
 import eu.saltyscout.leo2d.sprite.Animation;
@@ -12,14 +12,14 @@ import eu.saltyscout.leo2d.util.Callback;
  * Created by Peter on 10.11.2015.
  */
 public class Animator implements Component {
-    private final Transform transform;
+    private final GameObject gameObject;
     public Animation animation;
     private double sinceFrame = 0;
     private int currentFrame = 0;
     private boolean enabled = true;
 
-    public Animator(Transform transform) {
-        this.transform = transform;
+    public Animator(GameObject gameObject) {
+        this.gameObject = gameObject;
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Animator implements Component {
             }
             Animation.Frame frame = animation.getFrame(currentFrame);
             if (frame.sprite != null) {
-                transform.getComponent(SpriteRenderer.class).setSprite(frame.sprite);
+                gameObject.getComponent(SpriteRenderer.class).setSprite(frame.sprite);
                 for (Callback callback : frame.calls) {
                     callback.invoke();
                 }
@@ -61,7 +61,12 @@ public class Animator implements Component {
     }
 
     @Override
-    public Transform getTransform() {
-        return transform;
+    public GameObject getGameObject() {
+        return gameObject;
+    }
+
+    @Override
+    public void onDestroy() {
+
     }
 }

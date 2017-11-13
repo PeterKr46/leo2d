@@ -1,8 +1,8 @@
 package eu.saltyscout.leo2d.sprite;
 
 import eu.saltyscout.leo2d.core.Debug;
-import eu.saltyscout.leo2d.math.Rect;
-import eu.saltyscout.math.Vector;
+import org.dyn4j.geometry.AABB;
+import org.dyn4j.geometry.Vector2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,14 +30,14 @@ public class SpriteSheet {
         sprites.clear();
         for (int y = 0; y + height <= texture.getHeight(); y += height) {
             for (int x = 0; x + width <= texture.getWidth(); x += width) {
-                sprites.add(new Sprite(texture, new Rect(x, y, width, height)));
+                sprites.add(new Sprite(texture, new AABB(x, y, x+width, y+height)));
             }
         }
         Debug.log(texture.zDateiname + ": sliced into " + sprites.size() + " sprite(s).");
         return this;
     }
 
-    public SpriteSheet offset(Vector offset) {
+    public SpriteSheet offset(Vector2 offset) {
         for (Sprite sprite : sprites) {
             sprite.setOffset(offset);
         }

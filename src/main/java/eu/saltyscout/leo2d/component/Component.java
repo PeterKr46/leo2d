@@ -1,10 +1,10 @@
 package eu.saltyscout.leo2d.component;
 
-import eu.saltyscout.leo2d.Transform;
+import eu.saltyscout.leo2d.GameObject;
 
 /**
- * Components are Attachments for {@link Transform} instances.<br/>
- * Every subtype T must offer a public constructor T(Transform owner).
+ * Components are Attachments for {@link GameObject} instances.<br/>
+ * Every subtype T must offer a public constructor T(GameObject owner).
  */
 public interface Component {
     /**
@@ -31,10 +31,14 @@ public interface Component {
     void update();
 
     /**
-     * Each component is attached to one(!) Transform which is given upon initialization.
+     * Each component is attached to one(!) GameObject which is given upon initialization.
      *
-     * @return the Transform (final) to which this Component belongs.
+     * @return the GameObject (final) to which this Component belongs.
      */
-    Transform getTransform();
+    GameObject getGameObject();
 
+    /**
+     * Called by the GameObject upon destruction of this component.
+     */
+    void onDestroy();
 }

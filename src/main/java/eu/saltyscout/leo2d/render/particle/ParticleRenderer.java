@@ -2,16 +2,17 @@ package eu.saltyscout.leo2d.render.particle;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import eu.saltyscout.leo2d.GameObject;
 import eu.saltyscout.leo2d.Leo2D;
 import eu.saltyscout.leo2d.Scene;
-import eu.saltyscout.leo2d.Transform;
 import eu.saltyscout.leo2d.gl.VoltImg;
-import eu.saltyscout.leo2d.math.Rect;
 import eu.saltyscout.leo2d.render.RenderPhase;
 import eu.saltyscout.leo2d.render.Renderer;
 import eu.saltyscout.leo2d.sprite.Sprite;
 import eu.saltyscout.leo2d.sprite.Texture;
-import eu.saltyscout.math.Vector;
+import org.dyn4j.geometry.AABB;
+import org.dyn4j.geometry.Transform;
+import org.dyn4j.geometry.Vector2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +30,7 @@ public class ParticleRenderer implements Renderer {
     private static final int DATA_SIZE = 15;
 
 
-    private final Transform transform;
+    private final GameObject gameObject;
     private boolean enabled = true;
 
     private boolean globalPositions = true;
@@ -39,15 +40,15 @@ public class ParticleRenderer implements Renderer {
     private Sprite sprite = null;
     private int maxParticles = 256;
 
-    private Evaluable<Float> size, velRotDampening;
-    private Evaluable<float[]> color, velocityDampening;
+    private Evaluable<Double> size, velRotDampening;
+    private Evaluable<double[]> color, velocityDampening;
 
     // Location data is 9 floats per particle: x, y, vel.x, vel.y, rotation, vel.rotation, scale, vel.scale, alpha, lifeTime, lived, renderIndex
     private List<float[]> particleData = new ArrayList<>(maxParticles);
     private float spawnRate = 100f, sinceSpawned = 0;
 
-    public ParticleRenderer(Transform transform) {
-        this.transform = transform;
+    public ParticleRenderer(GameObject gameObject) {
+        this.gameObject = gameObject;
     }
 
     public boolean isEnabled() {
@@ -91,7 +92,7 @@ public class ParticleRenderer implements Renderer {
         particle[VEL_SCALE] += (Math.random() * 0.1f - 0.05f) * Leo2D.deltaTime();
 
         // Apply velocity dampening
-        float[] vel = velocityDampening.get(pc);
+        double[] vel = velocityDampening.get(pc);
         particle[VEL_X] -= ((1 - vel[0]) * Leo2D.deltaTime()) * particle[VEL_X];
         particle[VEL_Y] -= ((1 - vel[1]) * Leo2D.deltaTime()) * particle[VEL_Y];
 
@@ -100,18 +101,18 @@ public class ParticleRenderer implements Renderer {
         particle[POS_Y] += particle[VEL_Y] * Leo2D.deltaTime();
 
         particle[ROT] += (particle[VEL_ROT]) * Leo2D.deltaTime();
-        particle[SCALE] = size.get(pc);
+        particle[SCALE] = (float)(double)size.get(pc);
         // Change color
-        float[] color = this.color.get(pc);
-        particle[C_R] = color[0];
-        particle[C_G] = color[1];
-        particle[C_B] = color[2];
-        particle[C_A] = color[3];
+        double[] color = this.color.get(pc);
+        particle[C_R] = (float) color[0];
+        particle[C_G] = (float) color[1];
+        particle[C_B] = (float) color[2];
+        particle[C_A] = (float) color[3];
     }
 
     protected void initializeParticle(float[] particle) {
-        particle[POS_X] = globalPositions ? transform.getPosition().getX() : 0;
-        particle[POS_Y] = globalPositions ? transform.getPosition().getY() : 0;
+        particle[POS_X] = globalPositions ? (float) gameObject.getTransform().getTranslation().x : 0;
+        particle[POS_Y] = globalPositions ? (float) gameObject.getTransform().getTranslation().y : 0;
         particle[ROT] = (float) (Math.random() * 360);
         particle[SCALE] = 0.1f;
         particle[VEL_SCALE] = (float) ((Math.random() * 0.1f + 0.2f));
@@ -139,8 +140,13 @@ public class ParticleRenderer implements Renderer {
     }
 
     @Override
-    public Transform getTransform() {
-        return transform;
+    public GameObject getGameObject() {
+        return gameObject;
+    }
+
+    @Override
+    public void onDestroy() {
+
     }
 
     public int getLayer() {
@@ -166,16 +172,15 @@ public class ParticleRenderer implements Renderer {
     }
 
     @Override
-    public Rect getAABB() {
-        float xMin = transform.getPosition().getX(), yMin = transform.getPosition().getY(), xMax = xMin, yMax = yMin;
+    public AABB getAABB() {
+        double xMin = gameObject.getTransform().getTranslation().x, yMin = gameObject.getTransform().getTranslation().y, xMax = xMin, yMax = yMin;
         for (float[] data : particleData) {
             xMin = Math.min(xMin, data[POS_X] - data[SCALE]);
             xMax = Math.max(xMax, data[POS_X] + data[SCALE]);
             yMin = Math.min(yMin, data[POS_Y] - data[SCALE]);
             yMax = Math.max(yMax, data[POS_Y] + data[SCALE]);
         }
-        Rect r = new Rect(xMin, yMin, xMax - xMin, yMax - yMin);
-        if (Leo2D.isDebugEnabled()) r.visualize();
+        AABB r = new AABB(xMin, yMin, xMax - xMin, yMax - yMin);
         return r;
     }
 
@@ -191,34 +196,34 @@ public class ParticleRenderer implements Renderer {
         tex.loadGLTexture(Leo2D.getGL());
         tex.getTexture(volty.gl()).bind(volty.gl());
 
-        Rect sRect = sprite.getRect();
-        float tMin_x = Math.min(1f, sRect.getMinX() / tex.getWidth()),
+        AABB sRect = sprite.getRect();
+        double tMin_x = Math.min(1f, sRect.getMinX() / tex.getWidth()),
                 tMin_y = Math.min(1f, sRect.getMinY() / tex.getHeight()),
                 tMax_x = Math.min(1f, sRect.getMaxX() / tex.getWidth()),
                 tMax_y = Math.min(1f, sRect.getMaxY() / tex.getHeight());
-        Vector position;
-        Vector scale;
+        Vector2 position;
+        float scale;
         float rotation;
 
         volty.enable(GL.GL_BLEND);
         volty.blendFunc(GL2.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
         volty.begin(GL2.GL_QUADS);
-
+        Transform transform = gameObject.getTransform();
         for (float[] data : particleData) {
             // Only draw what is needed for this render pass.
             if (((int) data[REN_ID]) == pass) {
                 // Build usable data from particle array
-                position = globalPositions ? Vector.of(data[POS_X], data[POS_Y]) : transform.getPosition().add(data[POS_X], data[POS_Y]);
+                position = globalPositions ? new Vector2(data[POS_X], data[POS_Y]) : transform.getTransformed(new Vector2(data[POS_X], data[POS_Y]));
                 rotation = data[ROT];
-                scale = Vector.of(data[SCALE], data[SCALE]);
+                scale = data[SCALE];
 
-                Vector right = Vector.of(scale.getX(), 0).rotate(rotation).mul(sprite.getWidth() / sprite.getPPU());
-                Vector up = Vector.of(0, scale.getY()).rotate(rotation).mul(sprite.getHeight() / sprite.getPPU());
+                Vector2 right = new Vector2(scale, 0).rotate(rotation).multiply(sprite.getWidth() / sprite.getPPU());
+                Vector2 up = new Vector2(0, scale).rotate(rotation).multiply(sprite.getHeight() / sprite.getPPU());
 
-                Vector bl = Vector.copyOnWrite(position.add(sprite.getOffset().mulComponents(scale).rotate(rotation)));
-                Vector br = bl.add(right);
-                Vector tr = bl.add(right).add(up);
-                Vector tl = bl.add(up);
+                Vector2 bl = new Vector2(position.add(sprite.getOffset().multiply(scale).rotate(rotation)));
+                Vector2 br = bl.copy().add(right);
+                Vector2 tr = bl.copy().add(right).add(up);
+                Vector2 tl = bl.copy().add(up);
                 volty.gl().glColor4f(data[C_R], data[C_G], data[C_B], data[C_A]);
 
                 volty.texCoord(tMin_x, tMax_y);
@@ -248,19 +253,19 @@ public class ParticleRenderer implements Renderer {
         this.sprite = sprite;
     }
 
-    public void setSize(Evaluable<Float> size) {
+    public void setSize(Evaluable<Double> size) {
         this.size = size;
     }
 
-    public void setRotationalDampening(Evaluable<Float> velRotDampening) {
+    public void setRotationalDampening(Evaluable<Double> velRotDampening) {
         this.velRotDampening = velRotDampening;
     }
 
-    public void setVelocityDampening(Evaluable<float[]> velocityDampening) {
+    public void setVelocityDampening(Evaluable<double[]> velocityDampening) {
         this.velocityDampening = velocityDampening;
     }
 
-    public void setColor(Evaluable<float[]> color) {
+    public void setColor(Evaluable<double[]> color) {
         this.color = color;
     }
 

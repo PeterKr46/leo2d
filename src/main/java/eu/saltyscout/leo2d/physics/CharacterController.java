@@ -1,25 +1,25 @@
-package eu.saltyscout.leo2d.physics;
+/*package eu.saltyscout.leo2d.physics;
 
+import eu.saltyscout.leo2d.GameObject;
 import eu.saltyscout.leo2d.Leo2D;
 import eu.saltyscout.leo2d.Scene;
-import eu.saltyscout.leo2d.Transform;
 import eu.saltyscout.leo2d.component.Component;
 import eu.saltyscout.leo2d.math.Ray;
-import eu.saltyscout.math.Vector;
+import org.dyn4j.geometry.Vector2;
 
 /**
  * Created by Peter on 15.10.2015.
- */
+
 public class CharacterController implements Component {
-    private final Transform transform;
+    private final GameObject gameObject;
     public float radius = 0.25f;
     public float height = 1f;
-    public Vector gravity = Vector.of(0, -10);
-    public Vector velocity = Vector.of(0, -1);
+    public Vector2 gravity = new Vector2(0, -10);
+    public Vector2 velocity = new Vector2(0, -1);
     private boolean enabled = true;
 
-    public CharacterController(Transform transform) {
-        this.transform = transform;
+    public CharacterController(GameObject gameObject) {
+        this.gameObject = gameObject;
     }
 
     @Override
@@ -39,14 +39,14 @@ public class CharacterController implements Component {
 
     @Override
     public void update() {
-        velocity.add(gravity.clone().mul(Leo2D.deltaTime()));
-        Vector move = velocity.clone().mul(Leo2D.deltaTime());
-        Vector horizontal = Vector.of(move.getX(), 0).normalize();
-        Vector vertical = Vector.of(0, move.getY()).normalize();
+        velocity.add(gravity.clone().multiply(Leo2D.deltaTime()));
+        Vector2 move = velocity.clone().multiply(Leo2D.deltaTime());
+        Vector2 horizontal = new Vector2(move.x, 0).normalize();
+        Vector2 vertical = new Vector2(0, move.y).normalize();
 
         Physics.RaycastHit hitVertical = null;
         for (float i = -radius; i <= radius; i += radius) {
-            Ray ray = new Ray(transform.getPosition().add(0, i), vertical);
+            Ray ray = new Ray(gameObject.getPosition().add(0, i), vertical);
             Physics.RaycastHit hit = Physics.cast(ray);
             if (hitVertical == null || hit.hitDistance < hitVertical.hitDistance) {
                 hitVertical = hit;
@@ -54,7 +54,7 @@ public class CharacterController implements Component {
         }
         Physics.RaycastHit hitHorizontal = null;
         for (float i = -height / 2; i <= height / 2; i += height / 2) {
-            Ray ray = new Ray(transform.getPosition().add(i, 0), horizontal);
+            Ray ray = new Ray(gameObject.getPosition().add(i, 0), horizontal);
             Physics.RaycastHit hit = Physics.cast(ray);
             if (hitHorizontal == null || hit.hitDistance < hitHorizontal.hitDistance) {
                 hitHorizontal = hit;
@@ -62,29 +62,35 @@ public class CharacterController implements Component {
         }
 
         if (hitVertical != null) {
-            if (move.getY() < 0 && hitVertical.hitDistance - (height / 2) < Math.abs(move.getY())) {
+            if (move.y < 0 && hitVertical.hitDistance - (height / 2) < Math.abs(move.y)) {
                 Scene.getMainCamera().getVolty().cross(hitVertical.point);
                 move.setY((float) -(hitVertical.hitDistance - (height / 2)));
-            } else if (move.getY() > 0 && hitVertical.hitDistance - (height / 2) < move.getY()) {
+            } else if (move.y > 0 && hitVertical.hitDistance - (height / 2) < move.y) {
                 move.setY((float) (hitVertical.hitDistance - (height / 2)));
             }
         }
         if (hitHorizontal != null) {
-            if (move.getX() < 0 && hitHorizontal.hitDistance - (radius / 2) < Math.abs(move.getX())) {
+            if (move.x < 0 && hitHorizontal.hitDistance - (radius / 2) < Math.abs(move.x)) {
                 Scene.getMainCamera().getVolty().cross(hitHorizontal.point);
                 move.setX((float) -(hitHorizontal.hitDistance - (radius / 2)));
-            } else if (move.getX() > 0 && hitHorizontal.hitDistance - (height / 2) < move.getX()) {
+            } else if (move.x > 0 && hitHorizontal.hitDistance - (height / 2) < move.x) {
                 move.setX((float) (hitHorizontal.hitDistance - (radius / 2)));
             }
         }
         if (move.sqrMagnitude() == 0) {
             velocity = move;
         }
-        transform.setPosition(transform.getPosition().add(move));
+        gameObject.setPosition(gameObject.getPosition().add(move));
     }
 
     @Override
-    public Transform getTransform() {
-        return transform;
+    public GameObject getGameObject() {
+        return gameObject;
+    }
+
+    @Override
+    public void onDestroy() {
+
     }
 }
+*/

@@ -133,12 +133,11 @@ public class Leo2D implements GLEventListener {
 
         // Clear Canvas and repaint if possible.
         gl.glClear(GL.GL_COLOR_BUFFER_BIT);
+        List<GameObject> gameObjects = Scene.getTransforms();
 
-        List<Transform> transforms = Scene.getTransforms();
-
-        // Call earlyUpdate() on all transforms
-        for (Transform transform : transforms) {
-            transform.earlyUpdateComponents();
+        // Call earlyUpdate() on all gameObjects
+        for (GameObject gameObject : gameObjects) {
+            gameObject.earlyUpdateComponents();
         }
 
         // Paint scene if there is a camera available.
@@ -147,12 +146,15 @@ public class Leo2D implements GLEventListener {
             camera.display(glAutoDrawable);
         }
 
+        // Update the Physics simulation.
+        Scene.getDyn4J().update(deltaTime);
+
         // Call update() on all Components
-        for (Transform transform : transforms) {
+        for (GameObject gameObject : gameObjects) {
             try {
-                transform.updateComponents(glAutoDrawable);
+                gameObject.updateComponents(glAutoDrawable);
             } catch (Exception e) {
-                System.out.println("Error in Transform.update():");
+                System.out.println("Error in GameObject.update():");
                 e.printStackTrace();
             }
         }
