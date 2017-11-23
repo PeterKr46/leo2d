@@ -19,6 +19,11 @@
             <version>2.3.2</version>
         </dependency>
         <dependency>
+            <groupId>org.jogamp.gluegen</groupId>
+            <artifactId>gluegen-rt</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+        <dependency>
             <groupId>org.dyn4j</groupId>
             <artifactId>dyn4j</artifactId>
             <version>RELEASE</version>
